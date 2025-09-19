@@ -1,16 +1,155 @@
-Golf-Tool (Zufall & Scoring)
-Spieleranzahl
-          2 Spieler
-          3 Spieler
-          4 Spieler
-        
-Modus
-          Einzel
-          Team (Paare: 1+2 vs 3+4)
-        
-Spielernamen
+<!doctype html>
+<meta charset="utf-8">
+<title>Golf-Tool — Zufall, Optionen & Scoring</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;--accent:#0a84ff}
+body{margin:0;padding:12px;background:#f6f7fb;color:#111}
+header{display:flex;align-items:center;gap:12px}
+h1{font-size:18px;margin:0}
+.card{background:#fff;border-radius:10px;padding:12px;margin:10px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button{padding:10px;border-radius:8px;background:var(--accent);color:#fff;border:0;font-weight:600;cursor:pointer}
+button.secondary{background:#eee;color:#111}
+.big{font-size:20px;padding:16px}
+.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.player{border:1px solid #eee;padding:8px;border-radius:8px}
+label{font-size:13px;color:#444}
+input[type=text]{width:100%;padding:8px;margin:6px 0;border-radius:6px;border:1px solid #ddd}
+select{padding:8px;border-radius:6px;border:1px solid #ddd}
+.muted{color:#666;font-size:13px}
+.score{font-weight:800;font-size:18px}
+.chip{background:#efefef;padding:6px;border-radius:999px}
+</style>
 
+<div id="app">
+  <header><h1>Golf-Tool (Zufall & Scoring)</h1></header>
 
+  <!-- Setup -->
+  <div id="setup" class="card">
+    <div class="row">
+      <div>
+        <label><strong>Spieleranzahl</strong></label>
+        <select id="numPlayers">
+          <option value="2">2 Spieler</option>
+          <option value="3">3 Spieler</option>
+          <option value="4" selected>4 Spieler</option>
+        </select>
+      </div>
+      <div>
+        <label><strong>Modus</strong></label>
+        <select id="mode">
+          <option value="einzel">Einzel</option>
+          <option value="team">Team (Paare 1+2 vs 3+4)</option>
+        </select>
+      </div>
+    </div>
+    <div id="nameInputs" style="margin-top:10px"></div>
+    <div style="margin-top:10px">
+      <button id="startBtn">Spiel starten</button>
+    </div>
+  </div>
 
+  <!-- Main -->
+  <div id="main" style="display:none">
+    <div class="row">
+      <div style="flex:1" class="card">
+        <div><strong>Zufall: Schläger</strong></div>
+        <div style="margin:8px 0" id="clubCard" class="big chip">—</div>
+        <button id="randClubBtn">Schläger zufällig</button>
+        <hr>
+        <div><strong>Zufall: Spielform</strong></div>
+        <div style="margin:8px 0" id="formCard" class="big chip">—</div>
+        <button id="randFormBtn">Spielform zufällig</button>
+      </div>
 
-Spiel starten Gespeicherten Stand laden
+      <div style="flex:1" class="card">
+        <div><strong>Spieler & Punkte</strong></div>
+        <div id="playersArea" class="players" style="margin-top:10px"></div>
+        <div style="margin-top:10px">
+          <button class="secondary" id="newRound">Neue Runde</button>
+        </div>
+      </div>
+    </div>
+    <footer class="muted">Speichere diese Datei als <code>index.html</code> auf GitHub und öffne sie über <code>https://deinname.github.io</code></footer>
+  </div>
+</div>
+
+<script>
+(() => {
+  // --- Daten ---
+  const CLUBS=["Driver","Holz 3","Holz 5","Hybrid","Eisen 4","Eisen 5","Eisen 6","Eisen 7","Eisen 8","Eisen 9","Pitching Wedge","Gap Wedge","Sand Wedge","Putter"];
+
+  // Spielform-Optionen (keine Punkte)
+  const SPIELFORM_EINZEL=["Zählspiel","Matchplay","Stableford","Scramble","Vierball"];
+  const SPIELFORM_TEAM=["Foursome","Vierer mit Auswahldrive","Klassischer Vierer"];
+
+  // Punkteoptionen für Spieler (+/-)
+  const PUNKTE_OPTS=[
+    {label:"Birdie Bonus",value:1},
+    {label:"Bogey Malus",value:-1},
+    {label:"Longest Drive",value:2},
+    {label:"Wasserball",value:-2}
+  ];
+
+  let state={
+    numPlayers:4,
+    mode:"einzel",
+    players:[]
+  };
+
+  const $=sel=>document.querySelector(sel);
+
+  // --- Setup-Phase ---
+  function renderNameInputs(){
+    const n=Number($("#numPlayers").value);
+    const area=$("#nameInputs");
+    area.innerHTML="";
+    for(let i=0;i<n;i++){
+      area.insertAdjacentHTML("beforeend",`<input type="text" id="p${i}" placeholder="Spieler ${i+1}">`);
+    }
+  }
+  $("#numPlayers").addEventListener("change",renderNameInputs);
+  renderNameInputs();
+
+  $("#startBtn").addEventListener("click",()=>{
+    state.numPlayers=Number($("#numPlayers").value);
+    state.mode=$("#mode").value;
+    state.players=[];
+    for(let i=0;i<state.numPlayers;i++){
+      const val=$("#p"+i).value.trim()||`Spieler ${i+1}`;
+      state.players.push({name:val,score:0});
+    }
+    $("#setup").style.display="none";
+    $("#main").style.display="";
+    renderPlayers();
+  });
+
+  // --- Hauptfunktionen ---
+  $("#randClubBtn").addEventListener("click",()=>{
+    $("#clubCard").textContent=CLUBS[Math.floor(Math.random()*CLUBS.length)];
+  });
+
+  $("#randFormBtn").addEventListener("click",()=>{
+    const arr=state.mode==="team"?SPIELFORM_TEAM:SPIELFORM_EINZEL;
+    $("#formCard").textContent=arr[Math.floor(Math.random()*arr.length)];
+  });
+
+  $("#newRound").addEventListener("click",()=>{
+    if(confirm("Neue Runde starten?")){location.reload();}
+  });
+
+  function renderPlayers(){
+    const area=$("#playersArea");area.innerHTML="";
+    state.players.forEach((p,i)=>{
+      area.insertAdjacentHTML("beforeend",`
+        <div class="player">
+          <div><strong>${p.name}</strong></div>
+          <div class="score">${p.score} Punkte</div>
+        </div>
+      `);
+    });
+  }
+
+})();
+</script>
