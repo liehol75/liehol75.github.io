@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golf Zufallsgenerator</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f0f4f7;
+  color: #333;
+}
+header, .section {
+  padding: 20px;
+  text-align: center;
+}
+h1 {
+  margin: 0 0 10px;
+}
+button {
+  background: #2b7cff;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  margin: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover {
+  background: #1b5fcc;
+}
+input, select {
+  padding: 6px;
+  margin: 4px;
+}
+#game, #playersSection, #holesSection {
+  display: none;
+}
+.playerCard {
+  display: inline-block;
+  vertical-align: top;
+  background: #fff;
+  border-radius: 6px;
+  padding: 10px;
+  margin: 10px;
+  min-width: 220px;
+}
+.optionList {
+  font-size: 0.9em;
+  margin-top: 8px;
+  background: #f9f9f9;
+  padding: 4px;
+  border-radius: 4px;
+  min-height: 40px;
+}
+.holeRow {
+  margin: 4px 0;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Golf Zufallsgenerator</h1>
+</header>
+
+<div id="startSection" class="section">
+  <h2>Neue Runde starten</h2>
+  <label>Spieleranzahl:
+    <select id="playerCount">
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </select>
+  </label>
+  <label>Modus:
+    <select id="mode">
+      <option value="einzel">Einzel</option>
+      <option value="team">Team</option>
+    </select>
+  </label>
+  <button onclick="startGame()">Start</button>
+</div>
+
+<div id="game">
+  <div class="section">
+    <button onclick="randomClub()">🎲 Zufalls-Schläger</button>
+    <span id="clubResult"></span>
+    <br>
+    <button onclick="randomForm()">🎲 Zufalls-Spielform</button>
+    <span id="formResult"></span>
+    <br>
+    <button onclick="resetGame()">Neue Runde</button>
+  </div>
+
+  <div id="playersSection" class="section"></div>
+
+  <div id="holesSection" class="section">
+    <h3>Platzierungen pro Bahn</h3>
+    <div id="holes"></div>
+  </div>
+</div>
+
+<script>
+// === Konfigurierbare Daten ===
+let clubs = [
+  "Driver","Holz 3","Holz 5","Hybrid",
+  "Eisen 4","Eisen 5","Eisen 6","Eisen 7","Eisen 8","Eisen 9",
+  "Pitching Wedge","Gap Wedge","Sand Wedge","Lob Wedge","Putter"
+];
+let forms = [
+  "Zufallsschläger (Einer für die Bahn)",
+  "Zufallsschläger (für Alle)",
+  "Zufallsschläger (Luck of the draw)",
+  "Nur Eisen 7","Nur Pitching Wedge","Nur Hölzer",
+  "Nimm 2 -Best Ball","Nimm 2 -Worst Ball","Scramble Best Ball",
+  "Scramble Worst Ball","Nur zwei Zufallsschläger","Pflicht-Fairway-/Grüntreffer",
+  "Leder Wedge","Leder Wedge Mitspieler (Grün rettet)","Mitspieler wählen Schläger"
+];
+let options = [
+  {name:"Holz getroffen",value:-1},
+  {name:"Penalty Area",value:-1},
+  {name:"Out of bounds",value:-1},
+  {name:"3–Putt",value:-1},
+  {name:"1-Putt",value:+1},
+  {name:"Chip-In",value:+1},
+  {name:"Birdie",value:+1},
+  {name:"Nearest to the Pin",value:+1},
+  {name:"Fairway verfehlt",value:-1},
+  {name:"Green in Regulation",value:+1},
+  {name:"PAR gerettet",value:+1},
+  {name:"Bunker",value:-1},
+  {name:"Sandy PAR",value:+1},
+  {name:"Socket",value:-1},
+  {name:"Lady",value:-1},
+  {name:"2 Chips",value:-1},
+  {name:"Über‘s Grün getoppt",value:-1},
+  {name:"Doppel-PAR und mehr",value:-1}
+];
+
+let players = [];
+let optionOwner = {}; // Welcher Spieler hat welche Option?
+
+function startGame(){
+  const count = parseInt(document.getElementById("playerCount").value);
+  const mode = document.getElementById("mode").value;
+  players = [];
+  for (let i=0;i<count;i++){
+    players.push({name:"",score:0,selectedOptions:[]});
+  }
+  document.getElementById("startSection").style.display="none";
+  document.getElementById("game").style.display="block";
+  renderPlayers();
+  renderHoles(count);
+}
+function resetGame(){
+  document.getElementById("game").style.display="none";
+  document.getElementById("startSection").style.display="block";
+  document.getElementById("clubResult").textContent="";
+  document.getElementById("formResult").textContent="";
+  optionOwner = {};
+}
+function randomClub(){
+  const club = clubs[Math.floor(Math.random()*clubs.length)];
+  document.getElementById("clubResult").textContent=" → "+club;
+}
+function randomForm(){
+  const form = forms[Math.floor(Math.random()*forms.length)];
+  document.getElementById("formResult").textContent=" → "+form;
+}
+function renderPlayers(){
+  const container = document.getElementById("playersSection");
+  container.innerHTML="";
+  players.forEach((p,i)=>{
+    let div = document.createElement("div");
+    div.className="playerCard";
+    div.innerHTML=`
+      <div>
+        Spieler ${i+1}:
+        <input type="text" placeholder="Name" value="${p.name}" 
+        oninput="players[${i}].name=this.value">
+      </div>
+      <div>Punkte: <span id="score${i}">${p.score}</span></div>
+      <div>
+        <select onchange="addOption(${i},this.value)">
+          <option value="">Option wählen…</option>
+          ${options.map(o=>`<option value="${o.name}">${o.name} (${o.value>0?'+':''}${o.value})</option>`).join('')}
+        </select>
+      </div>
+      <div class="optionList" id="opt${i}">
+        ${p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>')}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  document.getElementById("playersSection").style.display="block";
+}
+function addOption(playerIndex,optionName){
+  if(!optionName) return;
+  const opt = options.find(o=>o.name===optionName);
+  if(!opt) return;
+  if(optionOwner[optionName]!==undefined){
+    let prevIndex=optionOwner[optionName];
+    let prev=players[prevIndex];
+    prev.score -= opt.value;
+    prev.selectedOptions=prev.selectedOptions.filter(o=>o.name!==optionName);
+  }
+  let p=players[playerIndex];
+  p.selectedOptions=p.selectedOptions.filter(o=>o.name!==optionName);
+  p.selectedOptions.push(opt);
+  p.score+=opt.value;
+  optionOwner[optionName]=playerIndex;
+  updateUI();
+}
+function updateUI(){
+  players.forEach((p,i)=>{
+    document.getElementById("score"+i).textContent=p.score;
+    document.getElementById("opt"+i).innerHTML=p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>');
+  });
+}
+
+// === Platzierungen ===
+function renderHoles(count){
+  const holesDiv=document.getElementById("holes");
+  holesDiv.innerHTML="";
+  for(let h=1;h<=18;h++){
+    let row=document.createElement("div");
+    row.className="holeRow";
+    let html=`<strong>Bahn ${h}:</strong> `;
+    for(let i=0;i<count;i++){
+      html+=`
+        <label>${i+1}:
+        <select onchange="setPlacement(${h},${i},this.value)">
+          <option value="">-</option>
+          <option value="1">1. Platz</option>
+          <option value="2">2. Platz</option>
+          ${count>=3?'<option value="3">3. Platz</option>':''}
+          ${count==4?'<option value="4">4. Platz</option>':''}
+        </select>
+        </label>
+      `;
+    }
+    row.innerHTML=html;
+    holesDiv.appendChild(row);
+  }
+  document.getElementById("holesSection").style.display="block";
+}
+function setPlacement(hole,playerIndex,place){
+  const count=players.length;
+  place=parseInt(place);
+  if(isNaN(place)) return;
+  let points=0;
+  if(count==4){
+    if(place==1) points=+2;
+    if(place==2) points=+1;
+    if(place==3) points=-1;
+    if(place==4) points=-2;
+  } else if(count==3){
+    if(place==1) points=+1;
+    if(place==2) points=0;
+    if(place==3) points=-1;
+  } else if(count==2){
+    if(place==1) points=+1;
+    if(place==2) points=-1;
+  }
+  // pro Bahn überschreiben wir nicht additiv, sondern addieren
+  players[playerIndex].score+=points;
+  updateUI();
+}
+</script>
+
+</body>
+</html>
