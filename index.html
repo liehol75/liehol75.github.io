@@ -3,118 +3,142 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Golf Zufallsgenerator</title>
+<title>GolfMix – Dein Zufallsgenerator</title>
 <style>
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
   margin: 0;
-  background: #f0f4f7;
+  background: linear-gradient(135deg,#e6f2ff,#f7faff);
   color: #333;
 }
 header {
-  padding: 20px;
+  padding: 30px;
   text-align: center;
 }
 h1 {
   margin: 0 0 10px;
+  font-size: 2.4em;
+  color:#2b7cff;
 }
 button {
   background: #2b7cff;
   color: #fff;
   border: none;
-  padding: 12px 20px;
+  padding: 14px 24px;
   margin: 8px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1.2em;
   cursor: pointer;
+  transition: background .2s;
 }
 button:hover {
   background: #1b5fcc;
 }
 input, select {
-  padding: 8px;
-  margin: 6px 0;
+  padding: 10px;
+  margin: 8px 0;
   font-size: 1em;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
+
 #startSection {
-  padding: 40px;
+  padding: 60px 20px;
   text-align: center;
+}
+.start-card{
+  display:inline-block;
+  background:#fff;
+  padding:40px 30px;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 #startSection label {
   display: block;
   margin-bottom: 20px;
   font-size: 1.2em;
+  color:#333;
 }
-#clubResultBox, #formResultBox {
-  margin-top: 10px;
-  font-size: 1.4em;
-  font-weight: bold;
-  background: #d6e8ff;
-  border-radius: 8px;
-  padding: 10px;
-  min-height: 40px;
+
+.section{
+  text-align:center;
 }
+
+.generator-box{
+  display:inline-block;
+  width:260px;
+  min-height:80px;
+  background:#d6e8ff;
+  border-radius:12px;
+  margin-top:10px;
+  font-size:1.4em;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Trebuchet MS',sans-serif;
+}
+
 .playerCard {
   display: inline-block;
   vertical-align: top;
   background: #fff;
-  border-radius: 6px;
-  padding: 10px;
-  margin: 10px;
-  min-width: 220px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 15px;
+  min-width: 240px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  text-align:left;
 }
-.optionList {
+.optionList, .placementTable {
   font-size: 0.9em;
   margin-top: 8px;
   background: #f9f9f9;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: 6px;
   min-height: 40px;
+}
+.placementTable{
+  max-height:120px;
+  overflow-y:auto;
+  background:#f0f4f7;
 }
 .holeRow {
   margin: 4px 0;
-}
-.placementTable {
-  margin-top: 8px;
-  font-size: 0.8em;
-  max-height: 120px;
-  overflow-y: auto;
-  background:#f0f4f7;
-  border-radius:4px;
-  padding:4px;
 }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Golf Zufallsgenerator</h1>
+  <h1>GolfMix – Dein Zufallsgenerator</h1>
 </header>
 
 <div id="startSection">
-  <label>Spieleranzahl:
-    <select id="playerCount">
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-    </select>
-  </label>
-  <label>Modus:
-    <select id="mode">
-      <option value="einzel">Einzel</option>
-      <option value="team">Team</option>
-    </select>
-  </label>
-  <button onclick="startGame()">Start</button>
+  <div class="start-card">
+    <label>Spieleranzahl:
+      <select id="playerCount">
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+    </label>
+    <label>Modus:
+      <select id="mode">
+        <option value="einzel">Einzel</option>
+        <option value="team">Team</option>
+      </select>
+    </label>
+    <button onclick="startGame()">Spiel starten</button>
+  </div>
 </div>
 
 <div id="game" style="display:none;">
-  <div class="section" style="text-align:center;">
+  <div class="section">
     <button onclick="randomClub()">🎲 Schläger</button>
-    <div id="clubResultBox"></div>
+    <div id="clubResultBox" class="generator-box"></div>
     <button onclick="randomForm()">🎲 Spielform</button>
-    <div id="formResultBox"></div>
+    <div id="formResultBox" class="generator-box"></div>
     <br>
     <button onclick="resetGame()">Neue Runde</button>
   </div>
@@ -165,7 +189,7 @@ let options = [
 ];
 
 let players = [];
-let optionOwner = {}; // Welcher Spieler hat welche Option?
+let optionOwner = {}; // Option nur bei einem Spieler
 let placements = {};  // Platzierungspunkte pro Spieler pro Bahn
 
 function startGame(){
@@ -174,7 +198,7 @@ function startGame(){
   optionOwner = {};
   placements = {};
   for (let i=0;i<count;i++){
-    players.push({name:"",score:0,selectedOptions:[]});
+    players.push({name:"",bonus:0,selectedOptions:[]});
   }
   document.getElementById("startSection").style.display="none";
   document.getElementById("game").style.display="block";
@@ -209,36 +233,36 @@ function renderPlayers(){
         <input type="text" placeholder="Name" value="${p.name}" 
         oninput="players[${i}].name=this.value;updateUI();">
       </div>
-      <div>Punkte (Bonus/Malus): <span id="score${i}">${p.score}</span></div>
+      <div><strong>Punkte:</strong> <span id="score${i}">0</span></div>
       <div>
         <select onchange="addOption(${i},this.value)">
           <option value="">Option wählen…</option>
           ${options.map(o=>`<option value="${o.name}">${o.name} (${o.value>0?'+':''}${o.value})</option>`).join('')}
         </select>
       </div>
-      <div class="optionList" id="opt${i}">
-        ${p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>')}
-      </div>
+      <div class="optionList" id="opt${i}"></div>
       <div class="placementTable" id="placement${i}"></div>
     `;
     container.appendChild(div);
   });
   document.getElementById("playersSection").style.display="block";
+  updateUI();
 }
 function addOption(playerIndex,optionName){
   if(!optionName) return;
   const opt = options.find(o=>o.name===optionName);
   if(!opt) return;
+  // Wenn Option schon woanders war, dort abziehen
   if(optionOwner[optionName]!==undefined){
     let prevIndex=optionOwner[optionName];
     let prev=players[prevIndex];
-    prev.score -= opt.value;
+    prev.bonus -= opt.value;
     prev.selectedOptions=prev.selectedOptions.filter(o=>o.name!==optionName);
   }
   let p=players[playerIndex];
   p.selectedOptions=p.selectedOptions.filter(o=>o.name!==optionName);
   p.selectedOptions.push(opt);
-  p.score+=opt.value;
+  p.bonus+=opt.value;
   optionOwner[optionName]=playerIndex;
   updateUI();
 }
@@ -289,7 +313,6 @@ function setPlacement(hole,playerIndex,place){
     if(place==2) points=-1;
   }
 
-  // nur speichern, nicht zum Score addieren
   const key=`${hole}-${playerIndex}`;
   placements[key]=points;
 
@@ -298,8 +321,19 @@ function setPlacement(hole,playerIndex,place){
 
 function updateUI(){
   players.forEach((p,i)=>{
-    document.getElementById("score"+i).textContent=p.score;
-    document.getElementById("opt"+i).innerHTML=p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>');
+    // Punkte berechnen = Bonus/Malus + Summe Platzierungen
+    let placementSum=0;
+    for(let h=1;h<=18;h++){
+      let key=`${h}-${i}`;
+      if(placements[key]!==undefined){
+        placementSum+=placements[key];
+      }
+    }
+    const total=p.bonus+placementSum;
+    document.getElementById("score"+i).textContent=total;
+
+    document.getElementById("opt"+i).innerHTML=
+      p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>');
 
     // Platzierungspunkte pro Bahn anzeigen
     let placementHtml='';
