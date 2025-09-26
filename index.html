@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GolfMix – Dein Zufallsgenerator</title>
+<title>GolfGag-Gadget</title>
 <style>
 body {
   font-family: 'Segoe UI', Tahoma, sans-serif;
@@ -41,7 +41,6 @@ input, select {
   border-radius:6px;
   border:1px solid #ccc;
 }
-
 #startSection {
   padding: 60px 20px;
   text-align: center;
@@ -59,13 +58,11 @@ input, select {
   font-size: 1.2em;
   color:#333;
 }
-
 .section{
   text-align:center;
 }
-
 .generator-box{
-  display:inline-block;
+  display:inline-flex;
   width:260px;
   min-height:80px;
   background:#d6e8ff;
@@ -73,12 +70,11 @@ input, select {
   margin-top:10px;
   font-size:1.4em;
   font-weight:bold;
-  display:flex;
   align-items:center;
   justify-content:center;
   font-family:'Trebuchet MS',sans-serif;
+  text-align:center;
 }
-
 .playerCard {
   display: inline-block;
   vertical-align: top;
@@ -111,7 +107,7 @@ input, select {
 <body>
 
 <header>
-  <h1>GolfMix – Dein Zufallsgenerator</h1>
+  <h1>GolfGag-Gadget</h1>
 </header>
 
 <div id="startSection">
@@ -163,6 +159,7 @@ let forms = [
   "Zufallsschläger (für Alle)",
   "Zufallsschläger (Luck of the draw)",
   "Nur Eisen 7","Nur Pitching Wedge","Nur Hölzer",
+  "Von Rot","Von Gelb",
   "Nimm 2 -Best Ball","Nimm 2 -Worst Ball","Scramble Best Ball",
   "Scramble Worst Ball","Nur zwei Zufallsschläger","Pflicht-Fairway-/Grüntreffer",
   "Leder Wedge","Leder Wedge Mitspieler (Grün rettet)","Mitspieler wählen Schläger"
@@ -185,7 +182,14 @@ let options = [
   {name:"Lady",value:-1},
   {name:"2 Chips",value:-1},
   {name:"Über‘s Grün getoppt",value:-1},
-  {name:"Doppel-PAR und mehr",value:-1}
+  {name:"Doppel-PAR und mehr",value:-1},
+  // neue Gag-Optionen:
+  {name:"Goldene Ananas",value:-1},
+  {name:"Luftschlag",value:-1},
+  {name:"Leider kurz",value:-1},
+  {name:"Schneckenficker",value:-1},
+  {name:"Großer Schwung, kleines Ergebnis",value:-1},
+  {name:"Luftalarm",value:-1}
 ];
 
 let players = [];
