@@ -11,7 +11,7 @@ body {
   background: #f0f4f7;
   color: #333;
 }
-header, .section {
+header {
   padding: 20px;
   text-align: center;
 }
@@ -22,20 +22,37 @@ button {
   background: #2b7cff;
   color: #fff;
   border: none;
-  padding: 8px 14px;
-  margin: 5px;
-  border-radius: 4px;
+  padding: 12px 20px;
+  margin: 8px;
+  border-radius: 6px;
+  font-size: 1.2em;
   cursor: pointer;
 }
 button:hover {
   background: #1b5fcc;
 }
 input, select {
-  padding: 6px;
-  margin: 4px;
+  padding: 8px;
+  margin: 6px 0;
+  font-size: 1em;
 }
-#game, #playersSection, #holesSection {
-  display: none;
+#startSection {
+  padding: 40px;
+  text-align: center;
+}
+#startSection label {
+  display: block;
+  margin-bottom: 20px;
+  font-size: 1.2em;
+}
+#clubResultBox, #formResultBox {
+  margin-top: 10px;
+  font-size: 1.4em;
+  font-weight: bold;
+  background: #d6e8ff;
+  border-radius: 8px;
+  padding: 10px;
+  min-height: 40px;
 }
 .playerCard {
   display: inline-block;
@@ -45,6 +62,7 @@ input, select {
   padding: 10px;
   margin: 10px;
   min-width: 220px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
 }
 .optionList {
   font-size: 0.9em;
@@ -57,6 +75,15 @@ input, select {
 .holeRow {
   margin: 4px 0;
 }
+.placementTable {
+  margin-top: 8px;
+  font-size: 0.8em;
+  max-height: 120px;
+  overflow-y: auto;
+  background:#f0f4f7;
+  border-radius:4px;
+  padding:4px;
+}
 </style>
 </head>
 <body>
@@ -65,8 +92,7 @@ input, select {
   <h1>Golf Zufallsgenerator</h1>
 </header>
 
-<div id="startSection" class="section">
-  <h2>Neue Runde starten</h2>
+<div id="startSection">
   <label>Spieleranzahl:
     <select id="playerCount">
       <option value="2">2</option>
@@ -83,13 +109,12 @@ input, select {
   <button onclick="startGame()">Start</button>
 </div>
 
-<div id="game">
-  <div class="section">
-    <button onclick="randomClub()">🎲 Zufalls-Schläger</button>
-    <span id="clubResult"></span>
-    <br>
-    <button onclick="randomForm()">🎲 Zufalls-Spielform</button>
-    <span id="formResult"></span>
+<div id="game" style="display:none;">
+  <div class="section" style="text-align:center;">
+    <button onclick="randomClub()">🎲 Schläger</button>
+    <div id="clubResultBox"></div>
+    <button onclick="randomForm()">🎲 Spielform</button>
+    <div id="formResultBox"></div>
     <br>
     <button onclick="resetGame()">Neue Runde</button>
   </div>
@@ -141,11 +166,13 @@ let options = [
 
 let players = [];
 let optionOwner = {}; // Welcher Spieler hat welche Option?
+let placements = {};  // Platzierungspunkte pro Spieler pro Bahn
 
 function startGame(){
   const count = parseInt(document.getElementById("playerCount").value);
-  const mode = document.getElementById("mode").value;
   players = [];
+  optionOwner = {};
+  placements = {};
   for (let i=0;i<count;i++){
     players.push({name:"",score:0,selectedOptions:[]});
   }
@@ -157,17 +184,18 @@ function startGame(){
 function resetGame(){
   document.getElementById("game").style.display="none";
   document.getElementById("startSection").style.display="block";
-  document.getElementById("clubResult").textContent="";
-  document.getElementById("formResult").textContent="";
+  document.getElementById("clubResultBox").textContent="";
+  document.getElementById("formResultBox").textContent="";
   optionOwner = {};
+  placements = {};
 }
 function randomClub(){
   const club = clubs[Math.floor(Math.random()*clubs.length)];
-  document.getElementById("clubResult").textContent=" → "+club;
+  document.getElementById("clubResultBox").textContent=club;
 }
 function randomForm(){
   const form = forms[Math.floor(Math.random()*forms.length)];
-  document.getElementById("formResult").textContent=" → "+form;
+  document.getElementById("formResultBox").textContent=form;
 }
 function renderPlayers(){
   const container = document.getElementById("playersSection");
@@ -179,9 +207,9 @@ function renderPlayers(){
       <div>
         Spieler ${i+1}:
         <input type="text" placeholder="Name" value="${p.name}" 
-        oninput="players[${i}].name=this.value">
+        oninput="players[${i}].name=this.value;updateUI();">
       </div>
-      <div>Punkte: <span id="score${i}">${p.score}</span></div>
+      <div>Punkte (Bonus/Malus): <span id="score${i}">${p.score}</span></div>
       <div>
         <select onchange="addOption(${i},this.value)">
           <option value="">Option wählen…</option>
@@ -191,6 +219,7 @@ function renderPlayers(){
       <div class="optionList" id="opt${i}">
         ${p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>')}
       </div>
+      <div class="placementTable" id="placement${i}"></div>
     `;
     container.appendChild(div);
   });
@@ -212,12 +241,6 @@ function addOption(playerIndex,optionName){
   p.score+=opt.value;
   optionOwner[optionName]=playerIndex;
   updateUI();
-}
-function updateUI(){
-  players.forEach((p,i)=>{
-    document.getElementById("score"+i).textContent=p.score;
-    document.getElementById("opt"+i).innerHTML=p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>');
-  });
 }
 
 // === Platzierungen ===
@@ -250,6 +273,7 @@ function setPlacement(hole,playerIndex,place){
   const count=players.length;
   place=parseInt(place);
   if(isNaN(place)) return;
+
   let points=0;
   if(count==4){
     if(place==1) points=+2;
@@ -264,9 +288,29 @@ function setPlacement(hole,playerIndex,place){
     if(place==1) points=+1;
     if(place==2) points=-1;
   }
-  // pro Bahn überschreiben wir nicht additiv, sondern addieren
-  players[playerIndex].score+=points;
+
+  // nur speichern, nicht zum Score addieren
+  const key=`${hole}-${playerIndex}`;
+  placements[key]=points;
+
   updateUI();
+}
+
+function updateUI(){
+  players.forEach((p,i)=>{
+    document.getElementById("score"+i).textContent=p.score;
+    document.getElementById("opt"+i).innerHTML=p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>');
+
+    // Platzierungspunkte pro Bahn anzeigen
+    let placementHtml='';
+    for(let h=1;h<=18;h++){
+      let key=`${h}-${i}`;
+      if(placements[key]!==undefined){
+        placementHtml+=`Bahn ${h}: ${placements[key]} Punkte<br>`;
+      }
+    }
+    document.getElementById("placement"+i).innerHTML=placementHtml;
+  });
 }
 </script>
 
