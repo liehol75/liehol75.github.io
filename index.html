@@ -1,107 +1,81 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>GolfGag-Gadget</title>
 <style>
+/* Basis */
 body {
   font-family: 'Segoe UI', Tahoma, sans-serif;
   margin: 0;
   background: linear-gradient(135deg,#e6f2ff,#f7faff);
   color: #333;
 }
-header {
-  padding: 30px;
-  text-align: center;
-}
-h1 {
-  margin: 0 0 10px;
-  font-size: 2.4em;
-  color:#2b7cff;
-}
+header { padding: 30px; text-align:center; }
+h1 { margin:0 0 10px; font-size:2.4em; color:#2b7cff; }
+
 button {
-  background: #2b7cff;
-  color: #fff;
-  border: none;
-  padding: 14px 24px;
-  margin: 8px;
-  border-radius: 8px;
-  font-size: 1.2em;
-  cursor: pointer;
-  transition: background .2s;
+  background:#2b7cff; color:#fff; border:none;
+  padding:10px 18px; margin:6px; border-radius:8px;
+  font-size:1.05em; cursor:pointer; transition:background .2s;
 }
-button:hover {
-  background: #1b5fcc;
-}
+button:hover { background:#1b5fcc; }
+
 input, select {
-  padding: 10px;
-  margin: 8px 0;
-  font-size: 1em;
-  border-radius:6px;
-  border:1px solid #ccc;
+  padding:8px; margin:6px 0; font-size:1em;
+  border-radius:6px; border:1px solid #ccc;
 }
-#startSection {
-  padding: 60px 20px;
-  text-align: center;
-}
+
+#startSection { padding:40px 20px; text-align:center; }
 .start-card{
-  display:inline-block;
-  background:#fff;
-  padding:40px 30px;
-  border-radius:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  display:inline-block; background:#fff; padding:28px 26px;
+  border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
-#startSection label {
-  display: block;
-  margin-bottom: 20px;
-  font-size: 1.2em;
-  color:#333;
-}
-.section{
-  text-align:center;
-}
+.section{ text-align:center; margin:12px 0 24px; }
+
 .generator-box{
-  display:inline-flex;
-  width:260px;
-  min-height:80px;
-  background:#d6e8ff;
-  border-radius:12px;
-  margin-top:10px;
-  font-size:1.4em;
-  font-weight:bold;
-  align-items:center;
-  justify-content:center;
-  font-family:'Trebuchet MS',sans-serif;
+  display:inline-flex; width:260px; min-height:64px;
+  background:#d6e8ff; border-radius:12px; margin-top:10px;
+  font-size:1.1em; font-weight:bold; align-items:center;
+  justify-content:center; font-family:'Trebuchet MS',sans-serif;
   text-align:center;
 }
+
 .playerCard {
-  display: inline-block;
-  vertical-align: top;
-  background: #fff;
-  border-radius: 10px;
-  padding: 15px;
-  margin: 15px;
-  min-width: 240px;
-  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  display:inline-block; vertical-align:top; background:#fff;
+  border-radius:10px; padding:12px; margin:12px;
+  min-width:240px; box-shadow:0 0 6px rgba(0,0,0,0.08);
   text-align:left;
 }
+
+.teamCard {
+  display:inline-block; vertical-align:top; background:#fff;
+  border-radius:10px; padding:12px; margin:12px;
+  min-width:300px; box-shadow:0 0 6px rgba(0,0,0,0.08);
+  text-align:left;
+}
+
 .optionList, .placementTable {
-  font-size: 0.9em;
-  margin-top: 8px;
-  background: #f9f9f9;
-  padding: 6px;
-  border-radius: 6px;
-  min-height: 40px;
+  font-size:0.9em; margin-top:8px; background:#f9f9f9; padding:6px;
+  border-radius:6px; min-height:40px;
 }
-.placementTable{
-  max-height:120px;
-  overflow-y:auto;
-  background:#f0f4f7;
+.placementTable { max-height:140px; overflow-y:auto; background:#f0f4f7; }
+.holeRow { margin:6px 0; }
+
+/* Matchplay badges */
+.badge {
+  display:inline-block; padding:8px 12px; border-radius:20px;
+  color:#fff; font-weight:700; min-width:70px; text-align:center;
 }
-.holeRow {
-  margin: 4px 0;
-}
+.up { background:#2b7cff; }    /* blau */
+.down { background:#d9534f; }  /* rot */
+.tied { background:#8a8a8a; }  /* grau */
+
+/* kleine helper */
+.centerRow { display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+label.inline { margin-right:8px; }
+.sectionTitle { margin:14px 0 8px; font-weight:700; color:#234; }
 </style>
 </head>
 <body>
@@ -113,36 +87,38 @@ input, select {
 <div id="startSection">
   <div class="start-card">
     <label>Spieleranzahl:
-      <select id="playerCount">
+      <select id="playerCount" onchange="updateModeOptions()">
         <option value="2">2</option>
         <option value="3">3</option>
         <option value="4">4</option>
       </select>
     </label>
+    <br>
     <label>Modus:
       <select id="mode">
-        <option value="einzel">Einzel</option>
-        <option value="team">Team</option>
+        <!-- dynamisch gefüllt -->
       </select>
     </label>
+    <br>
     <button onclick="startGame()">Spiel starten</button>
   </div>
 </div>
 
 <div id="game" style="display:none;">
-  <div class="section">
+  <!-- in Matchplay: keine Generatoren / keine Bonus-Optionen -->
+  <div id="generators" class="section">
     <button onclick="randomClub()">🎲 Schläger</button>
     <div id="clubResultBox" class="generator-box"></div>
     <button onclick="randomForm()">🎲 Spielform</button>
     <div id="formResultBox" class="generator-box"></div>
     <br>
-    <button onclick="resetGame()">Neue Runde</button>
+    <button onclick="resetGame()">Zurück</button>
   </div>
 
   <div id="playersSection" class="section"></div>
 
   <div id="holesSection" class="section">
-    <h3>Platzierungen pro Bahn</h3>
+    <h3 class="sectionTitle">Platzierungen pro Bahn</h3>
     <div id="holes"></div>
   </div>
 </div>
@@ -188,26 +164,64 @@ let options = [
   {name:"Leider kurz",value:-1},
   {name:"Schneckenficker",value:-1},
   {name:"Großer Schwung, kleines Ergebnis",value:-1},
-  {name:"Luftalarm",value:-1}
+  {name:"Luftalarm",value:-1},
+  {name:"Texas Wedge", value:+1} // neu: Texas Wedge (+1)
 ];
 
 let players = [];
-let optionOwner = {}; 
-let placements = {};  
+let optionOwner = {}; // option exklusiv pro Spieler
+let placements = {};  // objekt pro Bahn-Spieler/Team z.B. placements["5-1"] = {points:0, label:"T"} oder matchplay {result:"Gewonnen"}
+
+/* initiale Modus-Optionen beim Laden */
+updateModeOptions();
+
+function updateModeOptions(){
+  const count = parseInt(document.getElementById("playerCount").value);
+  const modeSel = document.getElementById("mode");
+  modeSel.innerHTML = "";
+
+  // Always Einzel
+  let opt = document.createElement("option");
+  opt.value = "einzel"; opt.textContent = "Einzel";
+  modeSel.appendChild(opt);
+
+  // Team only for 4 players
+  if(count==4){
+    let optTeam = document.createElement("option");
+    optTeam.value = "team"; optTeam.textContent = "Team";
+    modeSel.appendChild(optTeam);
+  }
+
+  // Matchplay for 2 or 4 players
+  if(count==2 || count==4){
+    let optMp = document.createElement("option");
+    optMp.value = "matchplay"; optMp.textContent = "Matchplay";
+    modeSel.appendChild(optMp);
+  }
+}
 
 function startGame(){
   const count = parseInt(document.getElementById("playerCount").value);
+  const mode = document.getElementById("mode").value;
   players = [];
   optionOwner = {};
   placements = {};
+
   for (let i=0;i<count;i++){
     players.push({name:"",bonus:0,selectedOptions:[]});
   }
+
   document.getElementById("startSection").style.display="none";
   document.getElementById("game").style.display="block";
+
+  // Generatoren nur wenn nicht Matchplay
+  document.getElementById("generators").style.display = (mode==="matchplay") ? "none" : "block";
+
   renderPlayers();
-  renderHoles(count);
+  renderHoles(count, mode);
 }
+
+/* Reset */
 function resetGame(){
   document.getElementById("game").style.display="none";
   document.getElementById("startSection").style.display="block";
@@ -216,6 +230,8 @@ function resetGame(){
   optionOwner = {};
   placements = {};
 }
+
+/* Generators (normal play only) */
 function randomClub(){
   const club = clubs[Math.floor(Math.random()*clubs.length)];
   document.getElementById("clubResultBox").textContent=club;
@@ -224,20 +240,106 @@ function randomForm(){
   const form = forms[Math.floor(Math.random()*forms.length)];
   document.getElementById("formResultBox").textContent=form;
 }
+
+/* Render players area */
 function renderPlayers(){
   const container = document.getElementById("playersSection");
   container.innerHTML="";
+  const mode = document.getElementById("mode").value;
+  const count = players.length;
+
+  // Matchplay & 4 players -> show teams (Team1: players 0&1, Team2: players 2&3)
+  if(mode==="matchplay" && count===4){
+    let teamDiv = document.createElement("div");
+    teamDiv.className = "centerRow";
+    let t1 = document.createElement("div"); t1.className="teamCard";
+    t1.innerHTML = `<strong>Team 1</strong><div>Spieler A:<br><input type="text" value="${players[0].name}" onchange="players[0].name=this.value;updateUI()"></div>
+                    <div>Spieler B:<br><input type="text" value="${players[1].name}" onchange="players[1].name=this.value;updateUI()"></div>
+                    <div class="placementTable" id="placement-team1"></div>`;
+    let t2 = document.createElement("div"); t2.className="teamCard";
+    t2.innerHTML = `<strong>Team 2</strong><div>Spieler C:<br><input type="text" value="${players[2].name}" onchange="players[2].name=this.value;updateUI()"></div>
+                    <div>Spieler D:<br><input type="text" value="${players[3].name}" onchange="players[3].name=this.value;updateUI()"></div>
+                    <div class="placementTable" id="placement-team2"></div>`;
+    teamDiv.appendChild(t1); teamDiv.appendChild(t2);
+    container.appendChild(teamDiv);
+
+    // Show matchplay status badges below teams
+    let statusRow = document.createElement("div");
+    statusRow.className = "centerRow";
+    statusRow.style.marginTop = "10px";
+    statusRow.innerHTML = `<div id="status-team1" class="badge tied">TIED</div><div id="status-team2" class="badge tied">TIED</div>`;
+    container.appendChild(statusRow);
+    return;
+  }
+
+  // Matchplay & 2 players: show two player inputs + badges
+  if(mode==="matchplay" && count===2){
+    let row = document.createElement("div");
+    row.className="centerRow";
+    for(let i=0;i<2;i++){
+      let div = document.createElement("div");
+      div.className="playerCard";
+      div.innerHTML = `<div><strong>Spieler ${i+1}</strong><br><input type="text" placeholder="Name" value="${players[i].name}" oninput="players[${i}].name=this.value;updateUI();"></div>
+                       <div style="margin-top:8px"><div id="status${i}" class="badge tied">TIED</div></div>
+                       <div class="placementTable" id="placement${i}"></div>`;
+      row.appendChild(div);
+    }
+    container.appendChild(row);
+    return;
+  }
+
+  // Non-matchplay (einzel oder team normal) or matchplay with other counts (not expected)
+  // For team mode (count==4 & mode=='team') show grouped names under teams but keep options present
+  if(mode==="team" && players.length===4){
+    let teamDiv = document.createElement("div");
+    teamDiv.className = "centerRow";
+    let t1 = document.createElement("div"); t1.className="teamCard";
+    t1.innerHTML = `<strong>Team 1</strong><div>Spieler 1:<br><input type="text" value="${players[0].name}" onchange="players[0].name=this.value;updateUI()"></div>
+                    <div>Spieler 2:<br><input type="text" value="${players[1].name}" onchange="players[1].name=this.value;updateUI()"></div>
+                    <div class="optionList" id="opt0"></div>
+                    <div class="placementTable" id="placement0"></div>`;
+    let t2 = document.createElement("div"); t2.className="teamCard";
+    t2.innerHTML = `<strong>Team 2</strong><div>Spieler 3:<br><input type="text" value="${players[2].name}" onchange="players[2].name=this.value;updateUI()"></div>
+                    <div>Spieler 4:<br><input type="text" value="${players[3].name}" onchange="players[3].name=this.value;updateUI()"></div>
+                    <div class="optionList" id="opt1"></div>
+                    <div class="placementTable" id="placement1"></div>`;
+    teamDiv.appendChild(t1); teamDiv.appendChild(t2);
+    container.appendChild(teamDiv);
+
+    // Still need options per individual player - show selects under each individual's card area
+    // We'll render individual option selectors below for clarity
+    let optsRow = document.createElement("div");
+    optsRow.className = "centerRow";
+    for(let i=0;i<4;i++){
+      let card = document.createElement("div");
+      card.className="playerCard";
+      card.style.minWidth="220px";
+      card.innerHTML = `<div>Spieler ${i+1}:<br><input type="text" value="${players[i].name}" oninput="players[${i}].name=this.value;updateUI();"></div>
+                        <div style="margin-top:6px;">
+                          <select onchange="addOption(${i},this.value)">
+                            <option value="">Option wählen…</option>
+                            ${options.map(o=>`<option value="${o.name}">${o.name} (${o.value>0?'+':''}${o.value})</option>`).join('')}
+                          </select>
+                        </div>
+                        <div class="optionList" id="opt${i}"></div>
+                        <div class="placementTable" id="placement${i}"></div>`;
+      optsRow.appendChild(card);
+    }
+    container.appendChild(optsRow);
+    return;
+  }
+
+  // Default: render individual player cards with options (einzel/normal)
+  let row = document.createElement("div");
+  row.className="centerRow";
   players.forEach((p,i)=>{
     let div = document.createElement("div");
     div.className="playerCard";
-    div.innerHTML=`
-      <div>
-        Spieler ${i+1}:
-        <input type="text" placeholder="Name" value="${p.name}" 
-        oninput="players[${i}].name=this.value;updateUI();">
+    div.innerHTML = `
+      <div>Spieler ${i+1}:<br>
+        <input type="text" placeholder="Name" value="${p.name}" oninput="players[${i}].name=this.value;updateUI();">
       </div>
-      <div><strong>Punkte:</strong> <span id="score${i}">0</span></div>
-      <div>
+      <div style="margin-top:6px;">
         <select onchange="addOption(${i},this.value)">
           <option value="">Option wählen…</option>
           ${options.map(o=>`<option value="${o.name}">${o.name} (${o.value>0?'+':''}${o.value})</option>`).join('')}
@@ -246,11 +348,13 @@ function renderPlayers(){
       <div class="optionList" id="opt${i}"></div>
       <div class="placementTable" id="placement${i}"></div>
     `;
-    container.appendChild(div);
+    row.appendChild(div);
   });
-  document.getElementById("playersSection").style.display="block";
+  container.appendChild(row);
   updateUI();
 }
+
+/* Option hinzufügen (exklusive OptionOwner-Logik bleibt) */
 function addOption(playerIndex,optionName){
   if(!optionName) return;
   const opt = options.find(o=>o.name===optionName);
@@ -269,107 +373,328 @@ function addOption(playerIndex,optionName){
   updateUI();
 }
 
-// === Platzierungen ===
-function renderHoles(count){
+/* Render Löcher (unterschiedliche Selects je Modus) */
+function renderHoles(count, mode){
   const holesDiv=document.getElementById("holes");
   holesDiv.innerHTML="";
   for(let h=1;h<=18;h++){
     let row=document.createElement("div");
     row.className="holeRow";
     let html=`<strong>Bahn ${h}:</strong> `;
-    for(let i=0;i<count;i++){
-      if(count==2){
-        html+=`
-          <label>${i+1}:
-          <select id="sel-${h}-${i}" onchange="setPlacement(${h},${i},this.value)">
+
+    // MATCHPLAY & 4 players -> only two team selects (Team1, Team2)
+    if(mode==="matchplay" && count===4){
+      html += `
+        <label>Team 1:
+          <select id="sel-${h}-team-1" onchange="setPlacementMatchplayTeam(${h},1,this.value)">
             <option value="">-</option>
-            <option value="1">1. Platz</option>
-            <option value="2">2. Platz</option>
-            <option value="T">T (geteilt)</option>
+            <option value="Gewonnen">Gewonnen</option>
+            <option value="Verloren">Verloren</option>
+            <option value="Geteilt">Geteilt</option>
           </select>
-          </label>
-        `;
-      } else {
-        html+=`
-          <label>${i+1}:
-          <select id="sel-${h}-${i}" onchange="setPlacement(${h},${i},this.value)">
+        </label>
+        <label>Team 2:
+          <select id="sel-${h}-team-2" onchange="setPlacementMatchplayTeam(${h},2,this.value)">
             <option value="">-</option>
-            <option value="1">1. Platz</option>
-            <option value="2">2. Platz</option>
-            ${count>=3?'<option value="3">3. Platz</option>':''}
-            ${count==4?'<option value="4">4. Platz</option>':''}
+            <option value="Gewonnen">Gewonnen</option>
+            <option value="Verloren">Verloren</option>
+            <option value="Geteilt">Geteilt</option>
           </select>
+        </label>
+      `;
+    }
+    // MATCHPLAY & 2 players -> two selects, synchronized (Gewonnen/Verloren/Geteilt)
+    else if(mode==="matchplay" && count===2){
+      for(let i=0;i<2;i++){
+        html+=`
+          <label>Spieler ${i+1}:
+            <select id="sel-${h}-${i}" onchange="setPlacementMatchplay(${h},${i},this.value)">
+              <option value="">-</option>
+              <option value="Gewonnen">Gewonnen</option>
+              <option value="Verloren">Verloren</option>
+              <option value="Geteilt">Geteilt</option>
+            </select>
           </label>
         `;
       }
     }
-    row.innerHTML=html;
+    // Normal stroke-play (2 players: include T option), or 3/4 players normal
+    else {
+      for(let i=0;i<count;i++){
+        if(count==2){
+          html+=`
+            <label>${i+1}:
+              <select id="sel-${h}-${i}" onchange="setPlacement(${h},${i},this.value)">
+                <option value="">-</option>
+                <option value="1">1. Platz</option>
+                <option value="2">2. Platz</option>
+                <option value="T">T (geteilt)</option>
+              </select>
+            </label>
+          `;
+        } else {
+          html+=`
+            <label>${i+1}:
+              <select id="sel-${h}-${i}" onchange="setPlacement(${h},${i},this.value)">
+                <option value="">-</option>
+                <option value="1">1. Platz</option>
+                <option value="2">2. Platz</option>
+                ${count>=3?'<option value="3">3. Platz</option>':''}
+                ${count==4?'<option value="4">4. Platz</option>':''}
+              </select>
+            </label>
+          `;
+        }
+      }
+    }
+
+    row.innerHTML = html;
     holesDiv.appendChild(row);
   }
   document.getElementById("holesSection").style.display="block";
 }
-function setPlacement(hole,playerIndex,place){
-  const count=players.length;
 
-  // Sonderfall "T" bei 2 Spielern
+/* ----- Platzierungs-Logik für Stroke-Play (wie vorher, mit T bei 2 Spielern) ----- */
+function setPlacement(hole,playerIndex,place){
+  const count = players.length;
+
+  // Sonderfall "T" bei 2 Spielern -> beide 0 Punkte und select synchronisieren
   if(count==2 && place==="T"){
     for (let i=0;i<count;i++){
-      placements[`${hole}-${i}`]={points:0,label:"T"};
-      // andere Selectboxen synchronisieren
-      document.getElementById(`sel-${hole}-${i}`).value="T";
+      placements[`${hole}-${i}`] = {points:0, label:"T"};
+      let sel = document.getElementById(`sel-${hole}-${i}`);
+      if(sel) sel.value = "T";
     }
     updateUI();
     return;
   }
 
-  // Standard-Punkte
-  place=parseInt(place);
-  if(isNaN(place)) return;
+  // normale numerische Auswahl (1/2/3/4)
+  let num = parseInt(place);
+  if(isNaN(num)) return;
 
-  let points=0;
+  let points = 0;
   if(count==4){
-    if(place==1) points=+2;
-    if(place==2) points=+1;
-    if(place==3) points=-1;
-    if(place==4) points=-2;
+    if(num==1) points=+2;
+    if(num==2) points=+1;
+    if(num==3) points=-1;
+    if(num==4) points=-2;
   } else if(count==3){
-    if(place==1) points=+1;
-    if(place==2) points=0;
-    if(place==3) points=-1;
+    if(num==1) points=+1;
+    if(num==2) points=0;
+    if(num==3) points=-1;
   } else if(count==2){
-    if(place==1) points=+1;
-    if(place==2) points=-1;
+    if(num==1) points=+1;
+    if(num==2) points=-1;
   }
 
-  placements[`${hole}-${playerIndex}`]={points:points,label:place};
+  placements[`${hole}-${playerIndex}`] = {points:points, label: num};
   updateUI();
 }
 
+/* ----- Matchplay für 2 Spieler ----- */
+function setPlacementMatchplay(hole, playerIndex, value){
+  // value ∈ {"Gewonnen","Verloren","Geteilt",""}
+  const other = playerIndex===0 ? 1 : 0;
+  if(value==="") {
+    // clear both if empty chosen?
+    // Only clear this player's selection; but to keep consistency, if other had a complementary value, do nothing.
+    placements[`${hole}-${playerIndex}`] = undefined;
+    // If both undefined, remove both entries for clarity
+    if(!placements[`${hole}-${other}`]) {
+      delete placements[`${hole}-${playerIndex}`];
+      delete placements[`${hole}-${other}`];
+    }
+    updateUI();
+    return;
+  }
+
+  // If chosen Gewonnen -> other automatically Verloren; Geteilt -> both Geteilt
+  if(value==="Gewonnen"){
+    placements[`${hole}-0`] = (playerIndex===0) ? {result:"Gewonnen"} : {result:"Verloren"};
+    placements[`${hole}-1`] = (playerIndex===0) ? {result:"Verloren"} : {result:"Gewonnen"};
+    document.getElementById(`sel-${hole}-0`).value = placements[`${hole}-0`].result;
+    document.getElementById(`sel-${hole}-1`).value = placements[`${hole}-1`].result;
+  } else if(value==="Verloren"){
+    placements[`${hole}-0`] = (playerIndex===0) ? {result:"Verloren"} : {result:"Gewonnen"};
+    placements[`${hole}-1`] = (playerIndex===0) ? {result:"Gewonnen"} : {result:"Verloren"};
+    document.getElementById(`sel-${hole}-0`).value = placements[`${hole}-0`].result;
+    document.getElementById(`sel-${hole}-1`).value = placements[`${hole}-1`].result;
+  } else if(value==="Geteilt"){
+    placements[`${hole}-0`] = {result:"Geteilt"};
+    placements[`${hole}-1`] = {result:"Geteilt"};
+    document.getElementById(`sel-${hole}-0`).value = "Geteilt";
+    document.getElementById(`sel-${hole}-1`).value = "Geteilt";
+  }
+  updateUI();
+}
+
+/* ----- Matchplay für 4 Spieler (Team vs Team) ----- */
+function setPlacementMatchplayTeam(hole, teamNumber, value){
+  // teamNumber 1 or 2; value "Gewonnen","Verloren","Geteilt",""
+  // Represent placements using keys "hole-team-1" / "hole-team-2"
+  const otherTeam = teamNumber===1 ? 2 : 1;
+  if(value==="") {
+    delete placements[`${hole}-team-${teamNumber}`];
+    updateUI();
+    return;
+  }
+
+  if(value==="Gewonnen"){
+    placements[`${hole}-team-1`] = (teamNumber===1) ? {result:"Gewonnen"} : {result:"Verloren"};
+    placements[`${hole}-team-2`] = (teamNumber===1) ? {result:"Verloren"} : {result:"Gewonnen"};
+    document.getElementById(`sel-${hole}-team-1`).value = placements[`${hole}-team-1`].result;
+    document.getElementById(`sel-${hole}-team-2`).value = placements[`${hole}-team-2`].result;
+  } else if(value==="Verloren"){
+    placements[`${hole}-team-1`] = (teamNumber===1) ? {result:"Verloren"} : {result:"Gewonnen"};
+    placements[`${hole}-team-2`] = (teamNumber===1) ? {result:"Gewonnen"} : {result:"Verloren"};
+    document.getElementById(`sel-${hole}-team-1`).value = placements[`${hole}-team-1`].result;
+    document.getElementById(`sel-${hole}-team-2`).value = placements[`${hole}-team-2`].result;
+  } else if(value==="Geteilt"){
+    placements[`${hole}-team-1`] = {result:"Geteilt"};
+    placements[`${hole}-team-2`] = {result:"Geteilt"};
+    document.getElementById(`sel-${hole}-team-1`).value = "Geteilt";
+    document.getElementById(`sel-${hole}-team-2`).value = "Geteilt";
+  }
+  updateUI();
+}
+
+/* ----- UI Update: berechne Punkte / Matchplay Stand und fülle Platzierungs-Übersichten ----- */
 function updateUI(){
-  players.forEach((p,i)=>{
-    let placementSum=0;
+  const mode = document.getElementById("mode").value;
+  const count = players.length;
+
+  if(mode==="matchplay" && count===2){
+    // Berechne Netto-Up für Spieler 0 (positive = UP, negative = DOWN)
+    let net = 0;
     for(let h=1;h<=18;h++){
-      let key=`${h}-${i}`;
-      if(placements[key]!==undefined){
-        placementSum+=placements[key].points;
+      let e0 = placements[`${h}-0`];
+      if(e0 && e0.result){
+        if(e0.result==="Gewonnen") net += 1;
+        if(e0.result==="Verloren") net -= 1;
+        // Geteilt -> 0
       }
     }
-    const total=p.bonus+placementSum;
-    document.getElementById("score"+i).textContent=total;
+    // set badges
+    if(net>0){
+      document.getElementById("status0").textContent = `${net} UP`;
+      document.getElementById("status0").className = "badge up";
+      document.getElementById("status1").textContent = `${net} DOWN`;
+      document.getElementById("status1").className = "badge down";
+    } else if(net<0){
+      const n = Math.abs(net);
+      document.getElementById("status0").textContent = `${n} DOWN`;
+      document.getElementById("status0").className = "badge down";
+      document.getElementById("status1").textContent = `${n} UP`;
+      document.getElementById("status1").className = "badge up";
+    } else {
+      document.getElementById("status0").textContent = `TIED`;
+      document.getElementById("status1").textContent = `TIED`;
+      document.getElementById("status0").className = "badge tied";
+      document.getElementById("status1").className = "badge tied";
+    }
 
-    document.getElementById("opt"+i).innerHTML=
-      p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>');
+    // Auflistung je Spieler: Bahn X: Ergebnis
+    for(let i=0;i<2;i++){
+      let placementHtml = "";
+      for(let h=1;h<=18;h++){
+        let key = `${h}-${i}`;
+        if(placements[key] && placements[key].result){
+          placementHtml += `Bahn ${h}: ${placements[key].result}<br>`;
+        }
+      }
+      const el = document.getElementById("placement"+i);
+      if(el) el.innerHTML = placementHtml;
+    }
+    return;
+  }
 
-    let placementHtml='';
+  if(mode==="matchplay" && count===4){
+    // Teams: Team1 = players 0&1, Team2 = players 2&3
+    let net = 0; // positive => Team1 leads
+    for(let h=1;h<=18;h++){
+      const t1 = placements[`${h}-team-1`];
+      if(t1 && t1.result){
+        if(t1.result==="Gewonnen") net += 1;
+        if(t1.result==="Verloren") net -= 1;
+        // Geteilt -> 0
+      }
+    }
+    // badges
+    if(net>0){
+      document.getElementById("status-team1").textContent = `${net} UP`;
+      document.getElementById("status-team1").className = "badge up";
+      document.getElementById("status-team2").textContent = `${net} DOWN`;
+      document.getElementById("status-team2").className = "badge down";
+    } else if(net<0){
+      const n = Math.abs(net);
+      document.getElementById("status-team1").textContent = `${n} DOWN`;
+      document.getElementById("status-team1").className = "badge down";
+      document.getElementById("status-team2").textContent = `${n} UP`;
+      document.getElementById("status-team2").className = "badge up";
+    } else {
+      document.getElementById("status-team1").textContent = `TIED`;
+      document.getElementById("status-team2").textContent = `TIED`;
+      document.getElementById("status-team1").className = "badge tied";
+      document.getElementById("status-team2").className = "badge tied";
+    }
+
+    // Auflistung je Team
+    let placementHtml1 = "";
+    let placementHtml2 = "";
+    for(let h=1;h<=18;h++){
+      if(placements[`${h}-team-1`]) placementHtml1 += `Bahn ${h}: ${placements[`${h}-team-1`].result}<br>`;
+      if(placements[`${h}-team-2`]) placementHtml2 += `Bahn ${h}: ${placements[`${h}-team-2`].result}<br>`;
+    }
+    const el1 = document.getElementById("placement-team1");
+    const el2 = document.getElementById("placement-team2");
+    if(el1) el1.innerHTML = placementHtml1;
+    if(el2) el2.innerHTML = placementHtml2;
+    return;
+  }
+
+  /* ---------- Normaler Stroke-Play / Team-Modus (non-matchplay) ---------- */
+  players.forEach((p,i)=>{
+    // Punkte berechnen = Bonus/Malus + Summe Platzierungen
+    let placementSum = 0;
+    for(let h=1;h<=18;h++){
+      let key = `${h}-${i}`;
+      if(placements[key]!==undefined && placements[key] && typeof placements[key].points === "number"){
+        placementSum += placements[key].points;
+      }
+    }
+    const total = p.bonus + placementSum;
+
+    // Punkteanzeige: wenn Team-Modus mit 4 Spielern wir zeigen weiterhin Punkte, wie gewünscht
+    let scoreEl = document.getElementById("score"+i);
+    if(scoreEl){
+      scoreEl.textContent = total;
+    }
+
+    // Option-Liste
+    let optEl = document.getElementById("opt"+i);
+    if(optEl){
+      optEl.innerHTML = p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>');
+    }
+
+    // Platzierungen pro Bahn
+    let placementHtml = '';
     for(let h=1;h<=18;h++){
       let key=`${h}-${i}`;
-      if(placements[key]!==undefined){
+      if(placements[key]!==undefined && placements[key] && placements[key].label!==undefined){
         placementHtml+=`Bahn ${h}: ${placements[key].label} (${placements[key].points} Punkte)<br>`;
       }
     }
-    document.getElementById("placement"+i).innerHTML=placementHtml;
+    let placeEl = document.getElementById("placement"+i);
+    if(placeEl) placeEl.innerHTML = placementHtml;
   });
+
 }
+
+/* Ensure initial mode options reflect default */
+document.addEventListener('DOMContentLoaded', ()=> {
+  updateModeOptions();
+});
 </script>
 
 </body>
