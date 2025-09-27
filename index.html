@@ -14,7 +14,6 @@ body {
 header { padding: 30px; text-align:center; }
 h1 { margin:0 0 10px; font-size:2.4em; color:#2b7cff; }
 
-/* Buttons */
 button {
   background:#2b7cff; color:#fff; border:none;
   padding:12px 20px; margin:10px; border-radius:8px;
@@ -22,20 +21,17 @@ button {
 }
 button:hover { background:#1b5fcc; }
 
-/* Inputs / Selects */
 input, select {
   padding:10px; margin:10px 0; font-size:1.2em;
   border-radius:6px; border:1px solid #ccc;
 }
 
-/* Startseite */
 #startSection { padding:40px 20px; text-align:center; }
 .start-card{
   display:inline-block; background:#fff; padding:32px;
   border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 
-/* Generatoren */
 #generators{
   text-align:center;
   margin-bottom:30px;
@@ -52,7 +48,6 @@ input, select {
   justify-content:center; display:flex;
 }
 
-/* Player Cards */
 .playerCard {
   display:inline-block; vertical-align:top; background:#fff;
   border-radius:10px; padding:12px; margin:12px;
@@ -71,9 +66,8 @@ input, select {
   border-radius:6px; min-height:40px;
 }
 .placementTable { max-height:140px; overflow-y:auto; background:#f0f4f7; }
-.holeRow { margin:6px 0; }
+.holeRow { margin:6px 0; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
 
-/* Matchplay badges */
 .badge {
   display:inline-block; padding:8px 12px; border-radius:20px;
   color:#fff; font-weight:700; min-width:80px; text-align:center;
@@ -83,7 +77,6 @@ input, select {
 .down { background:#d9534f; }
 .tied { background:#8a8a8a; }
 
-/* helper */
 .centerRow { display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; }
 .sectionTitle { margin:14px 0 8px; font-weight:700; color:#234; }
 </style>
@@ -208,7 +201,9 @@ function renderPlayers(){
     let div=document.createElement("div");div.className="playerCard";
     div.innerHTML=`<div>Spieler ${i+1}:<br><input type="text" oninput="players[${i}].name=this.value;updateUI();"></div>
     <div style="margin-top:6px;"><select onchange="addOption(${i},this.value)"><option value="">Option wählen…</option>${options.map(o=>`<option value="${o.name}">${o.name} (${o.value>0?'+':''}${o.value})</option>`).join('')}</select></div>
-    <div class="optionList" id="opt${i}"></div><div class="placementTable" id="placement${i}"></div>`;
+    <div class="optionList" id="opt${i}"></div>
+    <div>Gesamtpunkte: <span id="score${i}">0</span></div>
+    <div class="placementTable" id="placement${i}"></div>`;
     row.appendChild(div);
   });container.appendChild(row);updateUI();
 }
@@ -217,6 +212,7 @@ function addOption(playerIndex,optionName){
   if(!optionName)return;
   const opt=options.find(o=>o.name===optionName);
   if(!opt)return;
+  // vorherigen Besitzer abziehen
   if(optionOwner[optionName]!==undefined){
     let prevIndex=optionOwner[optionName];
     let prev=players[prevIndex];
@@ -224,8 +220,11 @@ function addOption(playerIndex,optionName){
     prev.selectedOptions=prev.selectedOptions.filter(o=>o.name!==optionName);
   }
   let p=players[playerIndex];
-  p.selectedOptions=p.selectedOptions.filter(o=>o.name!==optionName);
-  p.selectedOptions.push(opt);p.bonus+=opt.value;optionOwner[optionName]=playerIndex;updateUI();
+  if(!p.selectedOptions.some(o=>o.name===optionName)){
+    p.selectedOptions.push(opt);p.bonus+=opt.value;
+    optionOwner[optionName]=playerIndex;
+  }
+  updateUI();
 }
 
 function renderHoles(count,mode){
@@ -235,12 +234,11 @@ function renderHoles(count,mode){
     let row=document.createElement("div");row.className="holeRow";
     let html=`<strong>Bahn ${h}:</strong> `;
     if(mode==="matchplay"&&count===4){
-      html+=`<label>Team 1:<select id="sel-${h}-team-1" onchange="setPlacementMatchplayTeam(${h},1,this.value)"><option value="">-</option><option value="Gewonnen">Gewonnen</option><option value="Verloren">Verloren</option><option value="Geteilt">Geteilt</option></select></label>
-      <label>Team 2:<select id="sel-${h}-team-2" onchange="setPlacementMatchplayTeam(${h},2,this.value)"><option value="">-</option><option value="Gewonnen">Gewonnen</option><option value="Verloren">Verloren</option><option value="Geteilt">Geteilt</option></select></label>`;
+      html+=`Team 1:<select id="sel-${h}-team-1" onchange="setPlacementMatchplayTeam(${h},1,this.value)"><option value="">-</option><option value="Gewonnen">Gewonnen</option><option value="Verloren">Verloren</option><option value="Geteilt">Geteilt</option></select>
+      Team 2:<select id="sel-${h}-team-2" onchange="setPlacementMatchplayTeam(${h},2,this.value)"><option value="">-</option><option value="Gewonnen">Gewonnen</option><option value="Verloren">Verloren</option><option value="Geteilt">Geteilt</option></select>`;
     }else if(mode==="matchplay"&&count===2){
-      for(let i=0;i<2;i++){
-        html+=`<label>Spieler ${i+1}:<select id="sel-${h}-${i}" onchange="setPlacementMatchplay(${h},${i},this.value)"><option value="">-</option><option value="Gewonnen">Gewonnen</option><option value="Verloren">Verloren</option><option value="Geteilt">Geteilt</option></select></label>`;
-      }
+      html+=`Spieler 1:<select id="sel-${h}-0" onchange="setPlacementMatchplay(${h},0,this.value)"><option value="">-</option><option value="Gewonnen">Gewonnen</option><option value="Verloren">Verloren</option><option value="Geteilt">Geteilt</option></select>
+      Spieler 2:<select id="sel-${h}-1" onchange="setPlacementMatchplay(${h},1,this.value)"><option value="">-</option><option value="Gewonnen">Gewonnen</option><option value="Verloren">Verloren</option><option value="Geteilt">Geteilt</option></select>`;
     }else{
       for(let i=0;i<count;i++){
         if(count==2){
@@ -272,8 +270,7 @@ function setPlacement(hole,playerIndex,place){
 }
 
 function setPlacementMatchplay(hole,playerIndex,value){
-  const other=playerIndex===0?1:0;
-  if(value===""){placements[`${hole}-${playerIndex}`]=undefined;updateUI();return;}
+  if(value===""){placements[`${hole}-0`]=undefined;placements[`${hole}-1`]=undefined;updateUI();return;}
   if(value==="Gewonnen"){placements[`${hole}-0`]=(playerIndex===0)?{result:"Gewonnen"}:{result:"Verloren"};
     placements[`${hole}-1`]=(playerIndex===0)?{result:"Verloren"}:{result:"Gewonnen"};}
   else if(value==="Verloren"){placements[`${hole}-0`]=(playerIndex===0)?{result:"Verloren"}:{result:"Gewonnen"};
@@ -323,15 +320,15 @@ function updateUI(){
 
 function updateMatchplayUI(){
   const count=players.length;
-  // Score berechnen
   if(count===2){
-    let up=0;
+    let up=0;let played=0;
     for(let h=1;h<=18;h++){
       if(!placements[`${h}-0`])continue;
+      played++;
       let res=placements[`${h}-0`].result;
       if(res==="Gewonnen")up++; else if(res==="Verloren")up--;
     }
-    let remaining=18-Object.keys(placements).filter(k=>k.endsWith("-0")).length;
+    let remaining=18-played;
     let status0="",status1="",class0="",class1="";
     if(up===0){status0=status1="TIED";class0=class1="badge tied";}
     else if(up>0){
@@ -347,13 +344,13 @@ function updateMatchplayUI(){
     document.getElementById("status0").className=class0;
     document.getElementById("status1").className=class1;
   }else if(count===4){
-    let up=0;
+    let up=0;let played=0;
     for(let h=1;h<=18;h++){
       if(!placements[`${h}-team1`])continue;
+      played++;
       let res=placements[`${h}-team1`].result;
       if(res==="Gewonnen")up++; else if(res==="Verloren")up--;
     }
-    let played=Object.keys(placements).filter(k=>k.includes("team1")).length;
     let remaining=18-played;
     let s1="",s2="",c1="",c2="";
     if(up===0){s1=s2="TIED";c1=c2="badge tied";}
