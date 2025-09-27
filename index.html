@@ -183,7 +183,6 @@ let options = [
   {name:"2 Chips",value:-1},
   {name:"Über‘s Grün getoppt",value:-1},
   {name:"Doppel-PAR und mehr",value:-1},
-  // neue Gag-Optionen:
   {name:"Goldene Ananas",value:-1},
   {name:"Luftschlag",value:-1},
   {name:"Leider kurz",value:-1},
@@ -193,8 +192,8 @@ let options = [
 ];
 
 let players = [];
-let optionOwner = {}; // Option nur bei einem Spieler
-let placements = {};  // Platzierungspunkte pro Spieler pro Bahn
+let optionOwner = {}; 
+let placements = {};  
 
 function startGame(){
   const count = parseInt(document.getElementById("playerCount").value);
@@ -256,7 +255,6 @@ function addOption(playerIndex,optionName){
   if(!optionName) return;
   const opt = options.find(o=>o.name===optionName);
   if(!opt) return;
-  // Wenn Option schon woanders war, dort abziehen
   if(optionOwner[optionName]!==undefined){
     let prevIndex=optionOwner[optionName];
     let prev=players[prevIndex];
@@ -280,17 +278,30 @@ function renderHoles(count){
     row.className="holeRow";
     let html=`<strong>Bahn ${h}:</strong> `;
     for(let i=0;i<count;i++){
-      html+=`
-        <label>${i+1}:
-        <select onchange="setPlacement(${h},${i},this.value)">
-          <option value="">-</option>
-          <option value="1">1. Platz</option>
-          <option value="2">2. Platz</option>
-          ${count>=3?'<option value="3">3. Platz</option>':''}
-          ${count==4?'<option value="4">4. Platz</option>':''}
-        </select>
-        </label>
-      `;
+      if(count==2){
+        html+=`
+          <label>${i+1}:
+          <select id="sel-${h}-${i}" onchange="setPlacement(${h},${i},this.value)">
+            <option value="">-</option>
+            <option value="1">1. Platz</option>
+            <option value="2">2. Platz</option>
+            <option value="T">T (geteilt)</option>
+          </select>
+          </label>
+        `;
+      } else {
+        html+=`
+          <label>${i+1}:
+          <select id="sel-${h}-${i}" onchange="setPlacement(${h},${i},this.value)">
+            <option value="">-</option>
+            <option value="1">1. Platz</option>
+            <option value="2">2. Platz</option>
+            ${count>=3?'<option value="3">3. Platz</option>':''}
+            ${count==4?'<option value="4">4. Platz</option>':''}
+          </select>
+          </label>
+        `;
+      }
     }
     row.innerHTML=html;
     holesDiv.appendChild(row);
@@ -299,6 +310,19 @@ function renderHoles(count){
 }
 function setPlacement(hole,playerIndex,place){
   const count=players.length;
+
+  // Sonderfall "T" bei 2 Spielern
+  if(count==2 && place==="T"){
+    for (let i=0;i<count;i++){
+      placements[`${hole}-${i}`]={points:0,label:"T"};
+      // andere Selectboxen synchronisieren
+      document.getElementById(`sel-${hole}-${i}`).value="T";
+    }
+    updateUI();
+    return;
+  }
+
+  // Standard-Punkte
   place=parseInt(place);
   if(isNaN(place)) return;
 
@@ -317,20 +341,17 @@ function setPlacement(hole,playerIndex,place){
     if(place==2) points=-1;
   }
 
-  const key=`${hole}-${playerIndex}`;
-  placements[key]=points;
-
+  placements[`${hole}-${playerIndex}`]={points:points,label:place};
   updateUI();
 }
 
 function updateUI(){
   players.forEach((p,i)=>{
-    // Punkte berechnen = Bonus/Malus + Summe Platzierungen
     let placementSum=0;
     for(let h=1;h<=18;h++){
       let key=`${h}-${i}`;
       if(placements[key]!==undefined){
-        placementSum+=placements[key];
+        placementSum+=placements[key].points;
       }
     }
     const total=p.bonus+placementSum;
@@ -339,12 +360,11 @@ function updateUI(){
     document.getElementById("opt"+i).innerHTML=
       p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>');
 
-    // Platzierungspunkte pro Bahn anzeigen
     let placementHtml='';
     for(let h=1;h<=18;h++){
       let key=`${h}-${i}`;
       if(placements[key]!==undefined){
-        placementHtml+=`Bahn ${h}: ${placements[key]} Punkte<br>`;
+        placementHtml+=`Bahn ${h}: ${placements[key].label} (${placements[key].points} Punkte)<br>`;
       }
     }
     document.getElementById("placement"+i).innerHTML=placementHtml;
