@@ -1,3 +1,4 @@
+<!-- PART 1/3: Kopf (DOCTYPE, <head>, CSS) -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -5,7 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>GolfGag-Gadget</title>
 <style>
-/* Grundlayout */
+/* Grundlayout (leicht angepasst und erweitert) */
 body {
   font-family: 'Segoe UI', Tahoma, sans-serif;
   margin: 0;
@@ -36,75 +37,73 @@ input, select {
   border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 
-/* Generatoren - gestapelt und zentriert, visuell getrennt */
+/* Generatoren: jetzt gestapelt, getrennt und weiß gerahmt */
 #generators{
   text-align:center;
   margin-bottom:30px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:16px;
-  width:100%;
-  max-width:720px;
-  margin-left:auto;
-  margin-right:auto;
+  gap:18px;
 }
-
-/* Generator-Container (weiß, abgerundet) */
 .generator-block{
-  width:100%;
-  max-width:360px;
-  background:#fff;
-  border-radius:12px;
-  padding:14px;
-  box-shadow:0 3px 8px rgba(0,0,0,0.06);
+  width:320px;
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:10px;
 }
-/* Intern: Schläger-Button oben, Ergebnis darunter zentriert */
-.generator-block .gen-button {
+.generator-card {
   width:100%;
-  display:flex;
-  justify-content:center;
+  background:#fff;
+  border-radius:12px;
+  padding:18px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.06);
+  text-align:center;
 }
-.generator-box{
-  width:100%;
-  min-height:48px;
-  background:transparent; /* box is white already */
-  border-radius:8px;
-  font-size:1.05em; font-weight:700; 
-  align-items:center;
-  justify-content:center;
-  display:flex; text-align:center; padding:8px;
-  white-space:pre-wrap; /* erlaubt Zeilenumbrüche */
-}
-
-/* Trennlinie zwischen den beiden Generatoren (falls beide sichtbar) */
+/* Wenn beide Generatoren sichtbar: optische Trennung (z. B. leichter Rahmen) */
 .generator-separator {
-  width:90%;
+  width:80%;
   height:1px;
   background:linear-gradient(90deg, transparent, rgba(0,0,0,0.06), transparent);
   margin:6px 0;
 }
 
-/* Player Cards & Team Cards (erweitert für Team-Box) */
+/* Generator-Resultbox */
+.generator-box{
+  width:100%;
+  min-height:48px;
+  background:#fff;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:1.05em;
+  border:1px solid rgba(0,0,0,0.06);
+  padding:8px;
+  white-space:pre-wrap;
+}
+
+/* Player Cards & Teams */
 .playerCard, .teamCard {
   display:inline-block; vertical-align:top; background:#fff;
   border-radius:10px; padding:12px; margin:12px;
   min-width:260px; box-shadow:0 0 6px rgba(0,0,0,0.08);
   text-align:left;
 }
-.teamCard { min-width:300px; }
+.teamCard { min-width:620px; padding:14px; }
 
-/* Team wrapper für farbige Absetzung (für 4-Spieler Team-Modus) */
+/* Team-Visual (farblich abgesetztes Rechteck für 4-Spieler Team-Modus) */
 .teamWrapper {
-  background: linear-gradient(90deg,#f7fbff,#eef6ff);
+  background: linear-gradient(180deg,#f2f7ff,#ffffff);
   border-radius:12px;
-  padding:8px;
-  display:inline-block;
-  box-shadow:0 2px 6px rgba(0,0,0,0.04);
+  padding:10px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.04);
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  justify-content:space-between;
 }
 
 /* Placement / Option boxes */
@@ -113,9 +112,8 @@ input, select {
   border-radius:6px; min-height:40px;
 }
 .placementTable { max-height:140px; overflow-y:auto; background:#f0f4f7; }
-.holeRow { margin:6px 0; }
 
-/* Matchplay badges */
+/* Badge styles */
 .badge {
   display:inline-block; padding:8px 12px; border-radius:20px;
   color:#fff; font-weight:700; min-width:80px; text-align:center;
@@ -185,162 +183,75 @@ input, select {
 @media (max-width:420px){
   .holeCard { width:92%; }
   .generator-box { width:92%; }
+  .generator-block { width:92%; }
 }
+
+/* Score-Quadrate für Gesamt / Bonus / Bahn-Ergebnisse */
+.score-square {
+  display:inline-flex;
+  width:44px; height:36px;
+  align-items:center; justify-content:center;
+  border-radius:6px;
+  border:1px solid #000;
+  font-weight:700;
+  margin-left:8px;
+}
+.score-neutral { background:#e0e0e0; color:#fff; border-color:rgba(0,0,0,0.08); } /* 0: grau, weiß text */
+.score-positive { background:#2b7cff; color:#fff; border-color:transparent; }
+.score-negative { background:#d9534f; color:#fff; border-color:transparent; }
+.score-zero-white { background:#fff; color:#000; border-color:#000; } /* initial white */
+
+.score-small {
+  display:inline-flex;
+  width:36px; height:28px;
+  align-items:center; justify-content:center;
+  border-radius:5px;
+  font-weight:700;
+  margin-left:auto;
+  margin-right:0;
+}
+
+/* Hole circles for matchplay & kurzspiel (1..9 and 10..18 rows) */
+.hole-row {
+  display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap;
+}
+.hole-circle {
+  width:30px; height:30px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:0.9em;
+  background:#fff; color:#000; border:2px solid #000;
+}
+.hole-circle.win { background:#2b7cff; color:#fff; border-color:transparent; }
+.hole-circle.lose { background:#d9534f; color:#fff; border-color:transparent; }
+.hole-circle.tie { background:#8a8a8a; color:#fff; border-color:transparent; }
+.hole-circle.neutral { background:#fff; color:#000; border-color:#000; }
+
+/* Kurzspiel score cell (abgerundetes Rechteck) */
+.kurz-scorecell {
+  width:36px; height:36px; border-radius:8px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:700; border:2px solid rgba(0,0,0,0.06);
+  background:#f4f7fb; color:#000;
+}
+
+/* Kurzspiel circle variants - smaller circles and centered */
+.kurz-circle { width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; border:2px solid #000; background:#fff; color:#000; font-size:0.85em; line-height:1; }
+.kurz-orange { background:orange; color:#fff; border-color:transparent;}
+.kurz-yellow { background:yellow; color:#000; border-color:transparent;}
+.kurz-blue { background:#2b7cff; color:#fff; border-color:transparent;}
+.kurz-red { background:#d9534f; color:#fff; border-color:transparent;}
+.kurz-purple { background:rebeccapurple; color:#fff; border-color:transparent;}
+.kurz-black { background:#000; color:#fff; border-color:transparent;}
 
 /* zentrierte Ausrichtung für alle Modi */
 #playersSection { text-align:center; display:flex; justify-content:center; align-items:flex-start; flex-wrap:wrap; gap:12px; }
 
 /* kleinere Abstände zwischen Dropdown und Nummer für die 4-Spieler Einzel (falls benötigt) */
 .small-select-label { margin-right:6px; display:inline-block; }
-
-/* --- Neue Styles für Kreis-/Quadrat-Darstellungen --- */
-.holesGrid {
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  align-items:center;
-}
-.holesRow {
-  display:flex;
-  gap:8px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-.holeCircle {
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:2px solid #000;
-  background:#fff;
-  color:#000;
-  font-weight:700;
-  font-size:0.95em;
-  box-sizing:border-box;
-}
-.holeCircle.won { background:#2b7cff; color:#fff; border-color:#2b7cff; }
-.holeCircle.lost { background:#d9534f; color:#fff; border-color:#d9534f; }
-.holeCircle.tied { background:#8a8a8a; color:#fff; border-color:#8a8a8a; }
-
-/* Punkte-Quadrat neben Name */
-.scoreSquare {
-  width:42px;
-  height:42px;
-  border-radius:6px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  font-size:1.1em;
-  margin-left:10px;
-  border:2px solid #000;
-  background:#fff;
-  color:#000;
-}
-.scoreSquare.positive { background:#2b7cff; color:#fff; border-color:#2b7cff;}
-.scoreSquare.zero { background:#8a8a8a; color:#fff; border-color:#8a8a8a;}
-.scoreSquare.negative { background:#d9534f; color:#fff; border-color:#d9534f;}
-
-/* Bonussquare in optionList (rechtsbündig) */
-.bonusSquare {
-  width:36px;
-  height:36px;
-  border-radius:6px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  font-size:0.95em;
-  margin-left:8px;
-  border:2px solid #000;
-  background:#fff;
-  color:#000;
-}
-.bonusSquare.positive { background:#2b7cff; color:#fff; border-color:#2b7cff;}
-.bonusSquare.zero { background:#666; color:#fff; border-color:#666;}
-.bonusSquare.negative { background:#d9534f; color:#fff; border-color:#d9534f;}
-
-/* Hole-result-square for strokeplay results */
-.holeResultSquare {
-  width:30px;
-  height:30px;
-  border-radius:6px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  font-size:0.85em;
-  margin:2px;
-  border:2px solid #000;
-  background:#fff;
-  color:#000;
-}
-.holeResultSquare.pos { background:#2b7cff; color:#fff; border-color:#2b7cff; }
-.holeResultSquare.zero { background:#666; color:#fff; border-color:#666; }
-.holeResultSquare.neg { background:#d9534f; color:#fff; border-color:#d9534f; }
-
-/* Kurzspiel-Competition styles */
-.kurz-card {
-  background:#f3f8ff;
-  border-radius:10px;
-  padding:8px;
-  display:inline-block;
-  margin:8px;
-}
-.kurz-row {
-  display:flex;
-  gap:8px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-.kurz-hole-input {
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:2px solid #000;
-  background:#fff;
-  color:#000;
-}
-.kurz-hole-input.played { color:#fff; }
-.kurz-hole-display {
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:2px solid #000;
-  background:#fff;
-  color:#000;
-  font-weight:700;
-}
-
-/* team total field */
-.teamTotal {
-  display:inline-block;
-  padding:8px 12px;
-  border-radius:8px;
-  background:#fff;
-  border:2px solid #000;
-  font-weight:700;
-  margin-left:10px;
-}
-
-/* smaller screens */
-@media (max-width:720px){
-  .generator-block { max-width:92%; }
-  .playerCard, .teamCard { min-width:92%; }
-  .teamWrapper { min-width:92%; }
-}
 </style>
 </head>
 <body>
-
+<!-- PART 2/3: Body - UI Struktur (Startbereich, Generators, Platz für Spieler/Holes) -->
 <header>
   <h1>GolfGag-Gadget</h1>
 </header>
@@ -359,9 +270,10 @@ input, select {
       <select id="mode"></select>
     </label>
     <br>
-    <!-- PAR für Kurzspiel-Competition -->
-    <div id="parContainer" style="display:none;margin-top:8px;">
-      <label>PAR (für Kurzspiel-Competition): <input type="number" id="parValue" value="2" min="1" style="width:80px;"></label>
+    <div id="parSetting" style="display:none; margin-top:8px;">
+      <label>PAR für Kurzspiel-Competition:
+        <input id="parValue" type="number" min="-10" max="10" value="2" />
+      </label>
     </div>
     <br>
     <button onclick="startGame()">Spiel starten</button>
@@ -370,32 +282,29 @@ input, select {
 
 <div id="game" style="display:none;">
   <div id="generators" class="section">
-    <!-- Schlägergenerator Block -->
-    <div id="clubGeneratorBlock" class="generator-block" style="display:none;">
-      <div class="gen-button"><button class="gen" onclick="randomClub()">🎲 Schläger</button></div>
-      <div id="clubResultBox" class="generator-box"></div>
+    <div class="generator-block">
+      <div class="generator-card" id="clubGeneratorCard">
+        <div><button onclick="randomClub()">🎲 Schläger</button></div>
+        <div id="clubResultBox" class="generator-box"></div>
+      </div>
+
+      <div class="generator-separator"></div>
+
+      <div class="generator-card" id="formGeneratorCard">
+        <div><button onclick="randomForm()">🎲 Spielform</button></div>
+        <div id="formResultBox" class="generator-box"></div>
+      </div>
     </div>
-
-    <div class="generator-separator" id="genSeparator" style="display:none;"></div>
-
-    <!-- Spielform Generator Block -->
-    <div id="formGeneratorBlock" class="generator-block" style="display:none;">
-      <div class="gen-button"><button class="gen" onclick="randomForm()">🎲 Spielform</button></div>
-      <div id="formResultBox" class="generator-box"></div>
-    </div>
-
-    <br>
-    <button onclick="resetGame()">Zurück</button>
   </div>
 
   <div id="playersSection" class="section"></div>
 
-  <div id="holesSection" class="section" style="display:none;">
+  <div id="holesSection" class="section">
     <h3 class="sectionTitle">Platzierungen pro Bahn</h3>
     <div id="holes"></div>
   </div>
 </div>
-
+<!-- PART 3/3: Scripts (alle JS-Funktionen, automatische Team-Auswertung, Matchplay/Kurzspiel Logik) -->
 <script>
 let clubs=["Driver","Holz 3","Holz 5","Hybrid","Eisen 4","Eisen 5","Eisen 6","Eisen 7","Eisen 8","Eisen 9","Pitching Wedge","Gap Wedge","Sand Wedge","Lob Wedge","Putter"];
 let forms=["Zufallsschläger (Einer für die Bahn)","Zufallsschläger (für Alle)","Zufallsschläger (Luck of the draw)","Nur Eisen 7","Nur Pitching Wedge","Nur Hölzer","Von Rot","Von Gelb","Nimm 2 -Best Ball","Nimm 2 -Worst Ball","Scramble Best Ball","Scramble Worst Ball","Nur zwei Zufallsschläger","Pflicht-Fairway-/Grüntreffer","Leder Wedge","Leder Wedge Mitspieler (Grün rettet)","Mitspieler wählen Schläger"];
@@ -407,51 +316,36 @@ let options=[
 let players=[];
 let optionOwner={};
 let placements={};
-let parForKurz = 2; // default
+let kurzScores = {}; // for Kurzspiel-Competition: {playerIndex: {1:score,2:score,...}}
 
+/* MODE SELECT */
 function updateModeOptions(){
   const count=parseInt(document.getElementById("playerCount").value);
   const modeSel=document.getElementById("mode");
   modeSel.innerHTML="";
   let opt=document.createElement("option");
   opt.value="einzel"; opt.textContent="Einzel"; modeSel.appendChild(opt);
-  // Kurzspiel-Competition for 2,3,4
-  if(count>=2 && count<=4){
-    let optKurz=document.createElement("option");
-    optKurz.value="kurz"; optKurz.textContent="Kurzspiel-Competition"; modeSel.appendChild(optKurz);
-  }
+  let opt2=document.createElement("option");
+  opt2.value="kurz"; opt2.textContent="Kurzspiel-Competition"; modeSel.appendChild(opt2);
   if(count==4){let optTeam=document.createElement("option"); optTeam.value="team"; optTeam.textContent="Team"; modeSel.appendChild(optTeam);}
   if(count==2||count==4){let optMp=document.createElement("option"); optMp.value="matchplay"; optMp.textContent="Matchplay"; modeSel.appendChild(optMp);}
-  // show par input only if Kurz selected
-  const parContainer = document.getElementById("parContainer");
-  parContainer.style.display = (modeSel.value==="kurz") ? "block" : "none";
-  modeSel.onchange = function(){ parContainer.style.display = (this.value==="kurz") ? "block" : "none"; };
+  document.getElementById("mode").onchange = function(){
+    document.getElementById("parSetting").style.display = (document.getElementById("mode").value === "kurz") ? "block" : "none";
+  };
+  document.getElementById("mode").dispatchEvent(new Event('change'));
 }
 
+/* START / RESET */
 function startGame(){
   const count=parseInt(document.getElementById("playerCount").value);
   const mode=document.getElementById("mode").value;
-  players=[]; optionOwner={}; placements={};
-  for(let i=0;i<count;i++){players.push({name:"",bonus:0,selectedOptions:[],kortScores:Array(18).fill(null)});}
-  // par for Kurzspiel
-  const parInput = document.getElementById("parValue");
-  parForKurz = parInput ? Math.max(1, parseInt(parInput.value)||2) : 2;
-
+  players=[]; optionOwner={}; placements={}; kurzScores={};
+  for(let i=0;i<count;i++){players.push({name:"",bonus:0,selectedOptions:[]}); kurzScores[i] = {}; }
   document.getElementById("startSection").style.display="none";
   document.getElementById("game").style.display="block";
-
-  // generator visibility: only for non-matchplay and non-kurz
-  const showGenerators = !(mode==="matchplay" || mode==="kurz");
-  document.getElementById("generators").style.display = showGenerators ? "flex" : "none";
-  // But we must display the two generator blocks (club/form) *visually separated* when visible
-  document.getElementById("clubGeneratorBlock").style.display = showGenerators ? "flex" : "none";
-  document.getElementById("formGeneratorBlock").style.display = showGenerators ? "flex" : "none";
-  document.getElementById("genSeparator").style.display = showGenerators ? "block" : "none";
-
-  renderPlayers(); renderHoles(count,mode);
-
-  // If kurz: hide holesSection and show kurz-specific layout handled in renderPlayers
-  document.getElementById("holesSection").style.display = (mode==="kurz") ? "none" : "block";
+  document.getElementById("generators").style.display = (mode === "matchplay" || mode === "kurz") ? "none" : "flex";
+  renderPlayers();
+  renderHoles(count,mode);
 }
 
 function resetGame(){
@@ -459,9 +353,7 @@ function resetGame(){
   document.getElementById("startSection").style.display="block";
   document.getElementById("clubResultBox").textContent="";
   document.getElementById("formResultBox").textContent="";
-  optionOwner={}; placements={};
-  // reset par input
-  document.getElementById("parValue").value = 2;
+  optionOwner={}; placements={}; kurzScores={};
 }
 
 function randomClub(){document.getElementById("clubResultBox").textContent=clubs[Math.floor(Math.random()*clubs.length)];}
@@ -475,211 +367,148 @@ function randomForm(){
   }
 }
 
+/* RENDER PLAYERS (inkl. Matchplay/Team/Kurzspiel) */
 function renderPlayers(){
   const container=document.getElementById("playersSection");
   container.innerHTML="";
   const mode=document.getElementById("mode").value;
   const count=players.length;
 
-  // MATCHPLAY 4 Spieler (Team)
   if(mode==="matchplay"&&count===4){
-    let teamDiv=document.createElement("div"); teamDiv.className="centerRow";
-    // Team wrappers with colored background (visual)
-    let t1wrap=document.createElement("div"); t1wrap.className="teamWrapper";
-    let t2wrap=document.createElement("div"); t2wrap.className="teamWrapper";
+    let wrapper=document.createElement("div");
+    wrapper.className="teamWrapper";
 
-    let t1=document.createElement("div");t1.className="teamCard";
-    t1.innerHTML=`<strong>Team A</strong>
-      <div style="margin-top:8px;">Spieler 1:<br><input type="text" oninput="players[0].name=this.value;updateUI()"></div>
-      <div style="margin-top:6px;">Spieler 2:<br><input type="text" oninput="players[1].name=this.value;updateUI()"></div>
-      <div class="holesGrid" id="teamA-holes"></div>
-      <div style="margin-top:8px;"><div id="status-team1" class="badge tied">TIED</div><div id="team-total-1" class="teamTotal">0</div></div>
-      <div class="placementTable" id="placement-team1"></div>`;
+    // Team A (Spieler 1+2)
+    let t1=document.createElement("div"); t1.style.flex="1";
+    t1.innerHTML = `
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <strong>Team A</strong>
+        <div style="display:flex; align-items:center; gap:12px;"><div id="status-team1" class="badge tied">TIED</div><div id="teamA-total" class="score-square score-zero-white">0</div></div>
+      </div>
+      <div style="margin-top:8px; display:flex; gap:12px;">
+        <div style="flex:1;">
+          Spieler 1:<br><input type="text" oninput="players[0].name=this.value;updateUI();">
+          <div class="optionList" id="opt0" style="display:flex; align-items:center;">
+            <div style="flex:1;" id="optListInner0"></div>
+            <div id="bonus-square-0" class="score-small score-zero-white">0</div>
+          </div>
+          <div class="placementTable" id="placement0"></div>
+        </div>
+        <div style="flex:1;">
+          Spieler 2:<br><input type="text" oninput="players[1].name=this.value;updateUI();">
+          <div class="optionList" id="opt1" style="display:flex; align-items:center;">
+            <div style="flex:1;" id="optListInner1"></div>
+            <div id="bonus-square-1" class="score-small score-zero-white">0</div>
+          </div>
+          <div class="placementTable" id="placement1"></div>
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="text-align:center; font-weight:700; margin-bottom:6px;">Bahnen 1–9</div>
+        <div id="teamA-holes-1" class="hole-row" style="margin-bottom:6px;"></div>
+        <div style="text-align:center; font-weight:700; margin:6px 0 6px;">Bahnen 10–18</div>
+        <div id="teamA-holes-2" class="hole-row"></div>
+      </div>
+    `;
 
-    let t2=document.createElement("div");t2.className="teamCard";
-    t2.innerHTML=`<strong>Team B</strong>
-      <div style="margin-top:8px;">Spieler 3:<br><input type="text" oninput="players[2].name=this.value;updateUI()"></div>
-      <div style="margin-top:6px;">Spieler 4:<br><input type="text" oninput="players[3].name=this.value;updateUI()"></div>
-      <div class="holesGrid" id="teamB-holes"></div>
-      <div style="margin-top:8px;"><div id="status-team2" class="badge tied">TIED</div><div id="team-total-2" class="teamTotal">0</div></div>
-      <div class="placementTable" id="placement-team2"></div>`;
+    // Team B (Spieler 3+4)
+    let t2=document.createElement("div"); t2.style.flex="1";
+    t2.innerHTML = `
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <strong>Team B</strong>
+        <div style="display:flex; align-items:center; gap:12px;"><div id="status-team2" class="badge tied">TIED</div><div id="teamB-total" class="score-square score-zero-white">0</div></div>
+      </div>
+      <div style="margin-top:8px; display:flex; gap:12px;">
+        <div style="flex:1;">
+          Spieler 3:<br><input type="text" oninput="players[2].name=this.value;updateUI();">
+          <div class="optionList" id="opt2" style="display:flex; align-items:center;">
+            <div style="flex:1;" id="optListInner2"></div>
+            <div id="bonus-square-2" class="score-small score-zero-white">0</div>
+          </div>
+          <div class="placementTable" id="placement2"></div>
+        </div>
+        <div style="flex:1;">
+          Spieler 4:<br><input type="text" oninput="players[3].name=this.value;updateUI();">
+          <div class="optionList" id="opt3" style="display:flex; align-items:center;">
+            <div style="flex:1;" id="optListInner3"></div>
+            <div id="bonus-square-3" class="score-small score-zero-white">0</div>
+          </div>
+          <div class="placementTable" id="placement3"></div>
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="text-align:center; font-weight:700; margin-bottom:6px;">Bahnen 1–9</div>
+        <div id="teamB-holes-1" class="hole-row" style="margin-bottom:6px;"></div>
+        <div style="text-align:center; font-weight:700; margin:6px 0 6px;">Bahnen 10–18</div>
+        <div id="teamB-holes-2" class="hole-row"></div>
+      </div>
+    `;
 
-    t1wrap.appendChild(t1); t2wrap.appendChild(t2);
-    teamDiv.appendChild(t1wrap); teamDiv.appendChild(t2wrap); container.appendChild(teamDiv);
+    wrapper.appendChild(t1); wrapper.appendChild(t2);
+    container.appendChild(wrapper);
+    // build hole circles for teams
+    for(let h=1; h<=9; h++){
+      const a = document.createElement('div'); a.className='hole-circle neutral'; a.id = `team1-hole-${h}`; a.textContent = h; document.getElementById('teamA-holes-1').appendChild(a);
+      const b = document.createElement('div'); b.className='hole-circle neutral'; b.id = `team2-hole-${h}`; b.textContent = h; document.getElementById('teamB-holes-1').appendChild(b);
+    }
+    for(let h=10; h<=18; h++){
+      const a = document.createElement('div'); a.className='hole-circle neutral'; a.id = `team1-hole-${h}`; a.textContent = h; document.getElementById('teamA-holes-2').appendChild(a);
+      const b = document.createElement('div'); b.className='hole-circle neutral'; b.id = `team2-hole-${h}`; b.textContent = h; document.getElementById('teamB-holes-2').appendChild(b);
+    }
 
-    // Initialize team holes UI (1-9 and 10-18)
-    buildTeamHolesUI();
+    updateUI();
     return;
   }
 
-  // MATCHPLAY 2 Spieler
   if(mode==="matchplay"&&count===2){
     let row=document.createElement("div");row.className="centerRow";
     for(let i=0;i<2;i++){
       let div=document.createElement("div");div.className="playerCard";
-      div.innerHTML=`<div style="display:flex;align-items:center;"><div><strong>Spieler ${i+1}</strong><br><input type="text" oninput="players[${i}].name=this.value;updateUI();"></div><div id="scoreBox${i}" style="margin-left:12px;"></div></div><div style="margin-top:8px;text-align:center;"><div id="status${i}" class="badge tied">TIED</div></div><div class="holesGrid" id="player${i}-holes"></div><div class="placementTable" id="placement${i}"></div>`;
+      div.innerHTML=`<div style="display:flex; align-items:center; justify-content:space-between;">
+        <div><strong>Spieler ${i+1}</strong><br><input type="text" oninput="players[${i}].name=this.value;updateUI();"></div>
+        <div id="score${i}" class="score-square score-zero-white">0</div>
+      </div>
+      <div style="margin-top:8px;"><div id="status${i}" class="badge tied">TIED</div></div>
+      <div style="margin-top:10px;">
+        <div style="text-align:center; font-weight:700; margin-bottom:6px;">Bahnen 1–9</div>
+        <div id="player${i}-holes-1" class="hole-row" style="margin-bottom:6px;"></div>
+        <div style="text-align:center; font-weight:700; margin:6px 0 6px;">Bahnen 10–18</div>
+        <div id="player${i}-holes-2" class="hole-row"></div>
+      </div>
+      <div class="placementTable" id="placement${i}"></div>`;
       row.appendChild(div);
     }container.appendChild(row);
-    buildMatchplayHolesUI(); // build circles 1-9 and 10-18 for each player
+    // create hole circles for each player
+    for(let i=0;i<2;i++){
+      for(let h=1; h<=9; h++){ const el = document.createElement('div'); el.className='hole-circle neutral'; el.id=`p${i}-hole-${h}`; el.textContent=h; document.getElementById(`player${i}-holes-1`).appendChild(el); }
+      for(let h=10; h<=18; h++){ const el = document.createElement('div'); el.className='hole-circle neutral'; el.id=`p${i}-hole-${h}`; el.textContent=h; document.getElementById(`player${i}-holes-2`).appendChild(el); }
+    }
+    updateUI();
     return;
   }
 
-  // KURZ (Kurzspiel-Competition) - jeder Spieler bekommt Scorecard mit 18 Eingaben
-  if(mode==="kurz"){
-    let row=document.createElement("div");row.className="centerRow";
-    players.forEach((p,i)=>{
-      let div=document.createElement("div");div.className="playerCard";
-      div.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;">
-        <div><strong>Spieler ${i+1}</strong><br><input type="text" oninput="players[${i}].name=this.value;updateKurzUI();"></div>
-        <div><div id="kurz-total-${i}" class="scoreSquare zero">0</div></div>
-        </div>
-        <div style="margin-top:8px;" id="kurz-player-${i}-container"></div>`;
-      row.appendChild(div);
-    });
-    container.appendChild(row);
-    buildKurzUI();
-    return;
-  }
-
-  // default stroke-play (Einzel, 2/3/4 Spieler)
+  // Kurzspiel mode or Einzel/normal strokeplay rendering
   let row=document.createElement("div");row.className="centerRow";
   players.forEach((p,i)=>{
     let div=document.createElement("div");div.className="playerCard";
-    div.innerHTML=`<div style="display:flex;align-items:center;">
+    div.innerHTML=`<div style="display:flex; align-items:center; justify-content:space-between;">
       <div>Spieler ${i+1}:<br><input type="text" oninput="players[${i}].name=this.value;updateUI();"></div>
-      <div id="totalSquare${i}"><span class="scoreSquare zero" id="score${i}">0</span></div>
-      </div>
-      <div style="margin-top:6px;"><select onchange="addOption(${i},this.value)"><option value="">Option wählen…</option>${options.map(o=>`<option value="${o.name}">${o.name} (${o.value>0?'+':''}${o.value})</option>`).join('')}</select></div>
-      <div class="optionList" id="opt${i}" style="display:flex;align-items:center;justify-content:space-between;">
-        <div id="optList${i}"></div>
-        <div id="bonusSquareContainer${i}"></div>
-      </div>
-      <div class="placementTable" id="placement${i}"></div>`;
+      <div id="score${i}" class="score-square score-zero-white">0</div>
+    </div>
+    <div style="margin-top:6px;">
+      <select onchange="addOption(${i},this.value)"><option value="">Option wählen…</option>${options.map(o=>`<option value="${o.name}">${o.name} (${o.value>0?'+':''}${o.value})</option>`).join('')}</select>
+    </div>
+    <div class="optionList" id="opt${i}" style="display:flex; align-items:center;">
+      <div id="optListInner${i}" style="flex:1;"></div>
+      <div id="bonus-square-${i}" class="score-small score-zero-white">0</div>
+    </div>
+    <div class="placementTable" id="placement${i}"></div>`;
     row.appendChild(div);
-  });container.appendChild(row);updateUI();
+  });container.appendChild(row);
+  updateUI();
 }
 
-/* Build UI helpers for matchplay holes (2-player) and teams (4-player) */
-function buildMatchplayHolesUI(){
-  for(let i=0;i<players.length;i++){
-    const container = document.getElementById(`player${i}-holes`);
-    container.innerHTML = '';
-    let grid = document.createElement('div'); grid.className='holesGrid';
-    let row1=document.createElement('div'); row1.className='holesRow';
-    for(let h=1;h<=9;h++){ let c=createHoleCircle(`p${i}-${h}`,h); row1.appendChild(c); }
-    let row2=document.createElement('div'); row2.className='holesRow';
-    for(let h=10;h<=18;h++){ let c=createHoleCircle(`p${i}-${h}`,h); row2.appendChild(c); }
-    grid.appendChild(row1); grid.appendChild(row2); container.appendChild(grid);
-  }
-}
-
-function buildTeamHolesUI(){
-  // Team A (players 0 & 1)
-  const a = document.getElementById('teamA-holes'); a.innerHTML='';
-  const b = document.getElementById('teamB-holes'); b.innerHTML='';
-  let gridA=document.createElement('div'); gridA.className='holesGrid';
-  let r1=document.createElement('div'); r1.className='holesRow';
-  for(let h=1;h<=9;h++){ r1.appendChild(createHoleCircle(`teamA-${h}`,h)); }
-  let r2=document.createElement('div'); r2.className='holesRow';
-  for(let h=10;h<=18;h++){ r2.appendChild(createHoleCircle(`teamA-${h}`,h)); }
-  gridA.appendChild(r1); gridA.appendChild(r2); a.appendChild(gridA);
-
-  let gridB=document.createElement('div'); gridB.className='holesGrid';
-  let rb1=document.createElement('div'); rb1.className='holesRow';
-  for(let h=1;h<=9;h++){ rb1.appendChild(createHoleCircle(`teamB-${h}`,h)); }
-  let rb2=document.createElement('div'); rb2.className='holesRow';
-  for(let h=10;h<=18;h++){ rb2.appendChild(createHoleCircle(`teamB-${h}`,h)); }
-  gridB.appendChild(rb1); gridB.appendChild(rb2); b.appendChild(gridB);
-}
-
-/* createHoleCircle: builds the DOM element for a hole circle with id */
-function createHoleCircle(id, n){
-  let el=document.createElement('div');
-  el.className='holeCircle';
-  el.id = `circle-${id}`; // e.g. circle-p0-1 or circle-teamA-1
-  el.textContent = n;
-  return el;
-}
-
-/* Kurzspiel UI building */
-function buildKurzUI(){
-  for(let i=0;i<players.length;i++){
-    const container = document.getElementById(`kurz-player-${i}-container`);
-    container.innerHTML='';
-    // Display two rows: 1-9, 10-18 with inputs
-    let outer=document.createElement('div'); outer.className='kurz-card';
-    let row1=document.createElement('div'); row1.className='kurz-row';
-    for(let h=1;h<=9;h++){
-      let inp=document.createElement('input');
-      inp.type='number'; inp.min='0'; inp.value='0';
-      inp.className='kurz-hole-input';
-      inp.id=`kurz-${i}-${h}`;
-      inp.oninput = function(){ players[i].kortScores[h-1] = parseInt(this.value)||0; updateKurzUI(); };
-      row1.appendChild(inp);
-    }
-    let row2=document.createElement('div'); row2.className='kurz-row';
-    for(let h=10;h<=18;h++){
-      let inp=document.createElement('input');
-      inp.type='number'; inp.min='0'; inp.value='0';
-      inp.className='kurz-hole-input';
-      inp.id=`kurz-${i}-${h}`;
-      inp.oninput = function(){ players[i].kortScores[h-1] = parseInt(this.value)||0; updateKurzUI(); };
-      row2.appendChild(inp);
-    }
-    outer.appendChild(row1); outer.appendChild(row2); container.appendChild(outer);
-    // initialize kortScores if null
-    for(let k=0;k<18;k++){ if(players[i].kortScores[k]===null) players[i].kortScores[k]=0; }
-  }
-  updateKurzUI();
-}
-
-/* updateKurzUI: updates the total and colors based on PAR */
-function updateKurzUI(){
-  for(let i=0;i<players.length;i++){
-    let total=0;
-    for(let h=0;h<18;h++){ let v = parseInt(players[i].kortScores[h]||0); total += v; }
-    const totalEl = document.getElementById(`kurz-total-${i}`);
-    if(totalEl){
-      totalEl.textContent = total;
-      if(total>0){ totalEl.className='scoreSquare positive'; } // positive = blue (requested)
-      else if(total===0){ totalEl.className='scoreSquare zero'; }
-      else { totalEl.className='scoreSquare negative'; }
-    }
-    // update inputs' visual state and per-hole display if needed (color mapping)
-    for(let h=1;h<=18;h++){
-      const inp = document.getElementById(`kurz-${i}-${h}`);
-      if(!inp) continue;
-      const val = parseInt(inp.value)||0;
-      // difference relative to parForKurz
-      const diff = val - parForKurz;
-      // set background color per mapping:
-      // 2 unter PAR -> Orange
-      // 1 unter PAR -> Gelb
-      // PAR -> Blau
-      // 1 über PAR -> Rot
-      // 2 über PAR -> Lila
-      // 3+ über PAR -> Schwarz
-      inp.classList.remove('played');
-      inp.style.background = '#fff';
-      inp.style.color = '#000';
-      if(val !== 0){
-        inp.classList.add('played');
-        inp.style.color = '#fff';
-        if(diff <= -2) { inp.style.background = 'orange'; }
-        else if(diff === -1) { inp.style.background = 'yellow'; inp.style.color = '#000'; } // gelb with black text for readability
-        else if(diff === 0) { inp.style.background = '#2b7cff'; }
-        else if(diff === 1) { inp.style.background = '#d9534f'; }
-        else if(diff === 2) { inp.style.background = 'rebeccapurple'; }
-        else { inp.style.background = '#000'; }
-      } else {
-        // default white circle with black 0
-        inp.style.background = '#fff'; inp.style.color = '#000';
-      }
-    }
-  }
-}
-
-/* addOption remains largely same but we add bonusSquare update */
+/* ADD OPTION */
 function addOption(playerIndex,optionName){
   if(!optionName)return;
   const opt=options.find(o=>o.name===optionName);
@@ -691,15 +520,16 @@ function addOption(playerIndex,optionName){
     prev.selectedOptions=prev.selectedOptions.filter(o=>o.name!==optionName);
   }
   let p=players[playerIndex];
-  p.selectedOptions=p.selectedOptions.filter(o=>o.name!==optionName);
-  p.selectedOptions.push(opt);p.bonus+=opt.value;optionOwner[optionName]=playerIndex;updateUI();
+  if(!p.selectedOptions.find(o=>o.name===opt.name)){
+    p.selectedOptions.push(opt); p.bonus+=opt.value; optionOwner[optionName]=playerIndex;
+  }
+  updateUI();
 }
 
-/* renderHoles: mostly unchanged, but we keep Kurz out */
+/* RENDER HOLES (selects etc.) */
 function renderHoles(count,mode){
   const holesDiv=document.getElementById("holes");
   holesDiv.innerHTML="";
-  if(mode==="kurz") return; // Kurz uses different UI
   for(let h=1;h<=18;h++){
     let wrapper=document.createElement("div");
     wrapper.className="holeCard";
@@ -757,8 +587,9 @@ function renderHoles(count,mode){
             <option value="Geteilt">Geteilt</option>
           </select>
         </div>`;
+    } else if(mode==="kurz"){
+      controls.innerHTML = `<div style="font-size:0.9em; color:#666;">Kurzspiel-Competition: Eingabe in Scorecards</div>`;
     } else {
-      // Strokeplay wie gehabt - generiere selects für jeden Spieler
       let html='';
       for(let i=0;i<count;i++){
         if(count==2){
@@ -774,318 +605,443 @@ function renderHoles(count,mode){
     holesDiv.appendChild(wrapper);
   }
   document.getElementById("holesSection").style.display="block";
+
+  if(document.getElementById("mode").value === "kurz"){
+    renderKurzspielScorecards();
+    document.getElementById("holesSection").style.display = "none";
+  }
 }
 
-/* setPlacement for strokeplay: unchanged logic for points but update visuals */
+/* SET PLACEMENT for strokeplay */
 function setPlacement(hole,playerIndex,place){
   const count=players.length;
   if(count==2&&place==="T"){
     for(let i=0;i<count;i++){
       placements[`${hole}-${i}`]={points:0,label:"T"};
       let sel=document.getElementById(`sel-${hole}-${i}`);if(sel)sel.value="T";
-    }updateUI();return;
+    }
+    // if matchplay with teams, recompute team outcome automatically
+    if(document.getElementById("mode").value==="matchplay" && players.length===4){
+      computeTeamScoringFromIndividuals();
+    }
+    updateUI();return;
   }
   let num=parseInt(place);if(isNaN(num))return;
   let points=0;
   if(count==4){if(num==1)points=+2;if(num==2)points=+1;if(num==3)points=-1;if(num==4)points=-2;}
   else if(count==3){if(num==1)points=+1;if(num==2)points=0;if(num==3)points=-1;}
   else if(count==2){if(num==1)points=+1;if(num==2)points=-1;}
-  placements[`${hole}-${playerIndex}`]={points:points,label:num};updateUI();
+  placements[`${hole}-${playerIndex}`]={points:points,label:num};
+  // If in 4-player matchplay, recompute team outcome automatically
+  if(document.getElementById("mode").value==="matchplay" && players.length===4){
+    computeTeamScoringFromIndividuals();
+  }
+  updateUI();
 }
 
-/* Matchplay 2-player setPlacement: updated to correctly count played holes and update circles */
+/* SET PLACEMENT for 2-player matchplay (selects) */
 function setPlacementMatchplay(hole,playerIndex,value){
-  const other=playerIndex===0?1:0;
-  if(value===""){placements[`${hole}-${playerIndex}`]=undefined; 
-    // clear both selects to reflect undefined
-    if(document.getElementById(`sel-${hole}-0`)) document.getElementById(`sel-${hole}-0`).value="";
-    if(document.getElementById(`sel-${hole}-1`)) document.getElementById(`sel-${hole}-1`).value="";
-    // clear circles
-    updateMatchplayCircles2(hole);
-    updateMatchplayUI(); return;
-  }
-  if(value==="Gewonnen"){placements[`${hole}-0`]=(playerIndex===0)?{result:"Gewonnen"}:{result:"Verloren"};
-    placements[`${hole}-1`]=(playerIndex===0)?{result:"Verloren"}:{result:"Gewonnen"};}
-  else if(value==="Verloren"){placements[`${hole}-0`]=(playerIndex===0)?{result:"Verloren"}:{result:"Gewonnen"};
-    placements[`${hole}-1`]=(playerIndex===0)?{result:"Gewonnen"}:{result:"Verloren"};}
-  else if(value==="Geteilt"){placements[`${hole}-0`]={result:"Geteilt"};placements[`${hole}-1`]={result:"Geteilt"};}
-  // ensure both selects reflect result
-  if(document.getElementById(`sel-${hole}-0`)) document.getElementById(`sel-${hole}-0`).value=placements[`${hole}-0`].result;
-  if(document.getElementById(`sel-${hole}-1`)) document.getElementById(`sel-${hole}-1`).value=placements[`${hole}-1`].result;
-  // update circles and UI
-  updateMatchplayCircles2(hole);
-  updateMatchplayUI();
+  if(value===""){ delete placements[`${hole}-0`]; delete placements[`${hole}-1`]; updateSelectReflect(hole); updateUI(); return; }
+  if(value==="Gewonnen"){ placements[`${hole}-0`]=(playerIndex===0)?{result:"Gewonnen"}:{result:"Verloren"};
+    placements[`${hole}-1`]=(playerIndex===0)?{result:"Verloren"}:{result:"Gewonnen"}; }
+  else if(value==="Verloren"){ placements[`${hole}-0`]=(playerIndex===0)?{result:"Verloren"}:{result:"Gewonnen"};
+    placements[`${hole}-1`]=(playerIndex===0)?{result:"Gewonnen"}:{result:"Verloren"}; }
+  else if(value==="Geteilt"){ placements[`${hole}-0`]={result:"Geteilt"}; placements[`${hole}-1`]={result:"Geteilt"}; }
+  updateSelectReflect(hole);
+  updateUI();
 }
 
-/* updateMatchplayCircles2: set circle classes for both players for a given hole */
-function updateMatchplayCircles2(hole){
-  for(let i=0;i<2;i++){
-    const circle = document.getElementById(`circle-p${i}-${hole}`);
-    if(!circle) continue;
-    const entry = placements[`${hole}-${i}`];
-    circle.className='holeCircle';
-    if(entry && entry.result){
-      if(entry.result==="Gewonnen") circle.classList.add('won');
-      else if(entry.result==="Verloren") circle.classList.add('lost');
-      else if(entry.result==="Geteilt") circle.classList.add('tied');
-    } else {
-      // default white circle
-    }
-  }
-}
-
-/* setPlacementMatchplayTeam: updated team logic and circles; also update team total */
+/* SET PLACEMENT for Team selects (kept, but automatic computation from individuals has priority) */
 function setPlacementMatchplayTeam(hole,team,value){
-  if(value===""){placements[`${hole}-team1`]=undefined;placements[`${hole}-team2`]=undefined;
-    if(document.getElementById(`sel-${hole}-team-1`)) document.getElementById(`sel-${hole}-team-1`).value="";
-    if(document.getElementById(`sel-${hole}-team-2`)) document.getElementById(`sel-${hole}-team-2`).value="";
-    updateTeamCircles(hole); updateMatchplayUI(); return;
-  }
-  if(value==="Gewonnen"){placements[`${hole}-team1`]=(team===1)?{result:"Gewonnen"}:{result:"Verloren"};
-    placements[`${hole}-team2`]=(team===1)?{result:"Verloren"}:{result:"Gewonnen"};}
-  else if(value==="Verloren"){placements[`${hole}-team1`]=(team===1)?{result:"Verloren"}:{result:"Gewonnen"};
-    placements[`${hole}-team2`]=(team===1)?{result:"Gewonnen"}:{result:"Verloren"};}
-  else if(value==="Geteilt"){placements[`${hole}-team1`]={result:"Geteilt"};placements[`${hole}-team2`]={result:"Geteilt"};}
-  if(document.getElementById(`sel-${hole}-team-1`)) document.getElementById(`sel-${hole}-team-1`).value=placements[`${hole}-team1`].result;
-  if(document.getElementById(`sel-${hole}-team-2`)) document.getElementById(`sel-${hole}-team-2`).value=placements[`${hole}-team2`].result;
-  updateTeamCircles(hole);
-  updateMatchplayUI();
-}
-
-/* updateTeamCircles: paint circles for team holes */
-function updateTeamCircles(hole){
-  // Team A
-  const entryA = placements[`${hole}-team1`];
-  const circleA1 = document.getElementById(`circle-teamA-${hole}`);
-  if(circleA1){
-    circleA1.className='holeCircle';
-    if(entryA && entryA.result === "Gewonnen") circleA1.classList.add('won');
-    else if(entryA && entryA.result === "Verloren") circleA1.classList.add('lost');
-    else if(entryA && entryA.result === "Geteilt") circleA1.classList.add('tied');
-  }
-  // Team B
-  const entryB = placements[`${hole}-team2`];
-  const circleB1 = document.getElementById(`circle-teamB-${hole}`);
-  if(circleB1){
-    circleB1.className='holeCircle';
-    if(entryB && entryB.result === "Gewonnen") circleB1.classList.add('won');
-    else if(entryB && entryB.result === "Verloren") circleB1.classList.add('lost');
-    else if(entryB && entryB.result === "Geteilt") circleB1.classList.add('tied');
-  }
-
-  // Update team totals based on special rule: uses best player place of team to determine win/tie/loss per hole
-  // BUT this function is also called when user selects via team select; the special rule described also requires we compute team results from individual placements:
+  if(value===""){ delete placements[`${hole}-team1`]; delete placements[`${hole}-team2`]; updateSelectReflectTeam(hole); updateUI(); return;}
+  if(value==="Gewonnen"){ placements[`${hole}-team1`]=(team===1)?{result:"Gewonnen"}:{result:"Verloren"};
+    placements[`${hole}-team2`]=(team===1)?{result:"Verloren"}:{result:"Gewonnen"}; }
+  else if(value==="Verloren"){ placements[`${hole}-team1`]=(team===1)?{result:"Verloren"}:{result:"Gewonnen"};
+    placements[`${hole}-team2`]=(team===1)?{result:"Gewonnen"}:{result:"Verloren"}; }
+  else if(value==="Geteilt"){ placements[`${hole}-team1`]={result:"Geteilt"}; placements[`${hole}-team2`]={result:"Geteilt"}; }
+  updateSelectReflectTeam(hole);
+  // Also ensure individual-based auto-overwrite doesn't conflict: recompute using team selects if no individuals set
   computeTeamScoringFromIndividuals();
+  updateUI();
 }
 
-/* computeTeamScoringFromIndividuals:
-   For 4-player team variant (players 0&1 vs 2&3), compute per-hole team result based on the best placement among team members.
-   This function will also update placements[`${hole}-team1`] and `${hole}-team2` for display, plus circle classes and team totals.
+function updateSelectReflect(hole){
+  if(document.getElementById(`sel-${hole}-0`) && placements[`${hole}-0`]) document.getElementById(`sel-${hole}-0`).value = placements[`${hole}-0`].result;
+  if(document.getElementById(`sel-${hole}-1`) && placements[`${hole}-1`]) document.getElementById(`sel-${hole}-1`).value = placements[`${hole}-1`].result;
+}
+function updateSelectReflectTeam(hole){
+  if(document.getElementById(`sel-${hole}-team-1`) && placements[`${hole}-team1`]) document.getElementById(`sel-${hole}-team-1`).value = placements[`${hole}-team1`].result;
+  if(document.getElementById(`sel-${hole}-team-2`) && placements[`${hole}-team2`]) document.getElementById(`sel-${hole}-team-2`).value = placements[`${hole}-team2`].result;
+}
+
+/* AUTOMATIC TEAM AUSWERTUNG basierend auf individuellen Platzierungen
+   Team A = Spieler 0 & 1, Team B = Spieler 2 & 3.
+   Für jedes Loch: bestes (kleinste) Platzierungslabel eines Teammitglieds entscheidet.
+   numeric < numeric -> win; equal -> tie; missing entries -> ignored.
+   Assigned team result stored in placements[`${h}-team1`] & `${h}-team2`.
 */
 function computeTeamScoringFromIndividuals(){
-  // For each hole 1..18, check individual placements available in placements (like "1","2","3","4" or T)
+  // Only valid when 4 players exist and mode is matchplay
+  if(players.length !== 4) return;
   for(let h=1; h<=18; h++){
-    // collect best position for team A (players 0 & 1) and team B (players 2 & 3)
-    let bestA = null; // numeric best (1,2,3,4) or 'T'
+    // Collect labels for each team
+    let bestA = null; // numeric or 'T'
     let bestB = null;
-    // helper to parse label
+    // players 0 and 1 -> A; 2 and 3 -> B
     for(let pi=0; pi<4; pi++){
       const ent = placements[`${h}-${pi}`];
       if(!ent) continue;
       const lab = ent.label;
       if(lab === "T"){
-        // mark T but still prefer numeric better positions if exist
-        if(pi<=1){ bestA = (bestA === null) ? 'T' : ( typeof bestA === 'number' ? bestA : bestA ); }
-        else { bestB = (bestB === null) ? 'T' : ( typeof bestB === 'number' ? bestB : bestB ); }
+        if(pi<=1){ if(bestA===null) bestA='T'; }
+        else { if(bestB===null) bestB='T'; }
       } else if(typeof lab === 'number'){
         if(pi<=1){
-          if(bestA === null || bestA === 'T' || lab < bestA) bestA = lab;
+          if(bestA===null || bestA==='T' || lab < bestA) bestA = lab;
         } else {
-          if(bestB === null || bestB === 'T' || lab < bestB) bestB = lab;
+          if(bestB===null || bestB==='T' || lab < bestB) bestB = lab;
         }
       }
     }
-    // Determine team outcome:
-    // If bestA is numeric and bestB is numeric:
-    //   if bestA < bestB => team A wins
-    //   if bestA == bestB => tie
-    //   else team B wins
-    // If one is numeric and other is T => numeric beats T (numeric => win)
-    // If both T => tie
-    // If none have entries => leave undefined
+    // Determine team result
     if(bestA === null && bestB === null){
-      // no result
-      placements[`${h}-team1`] = undefined; placements[`${h}-team2`] = undefined;
+      // no data -> keep any existing team-select result (do nothing) OR clear results
+      // We'll clear to avoid stale state
+      delete placements[`${h}-team1`];
+      delete placements[`${h}-team2`];
     } else {
-      let resA = null, resB = null;
-      if(bestA === 'T' && bestB === 'T'){ resA = 'Geteilt'; resB = 'Geteilt'; }
-      else if(bestA === 'T' && typeof bestB === 'number'){ resA = 'Verloren'; resB = 'Gewonnen'; }
-      else if(bestB === 'T' && typeof bestA === 'number'){ resA = 'Gewonnen'; resB = 'Verloren'; }
+      let resA=null, resB=null;
+      if(bestA === 'T' && bestB === 'T'){ resA='Geteilt'; resB='Geteilt'; }
+      else if(bestA === 'T' && typeof bestB === 'number'){ resA='Verloren'; resB='Gewonnen'; }
+      else if(bestB === 'T' && typeof bestA === 'number'){ resA='Gewonnen'; resB='Verloren'; }
       else if(typeof bestA === 'number' && typeof bestB === 'number'){
-        if(bestA < bestB){ resA = 'Gewonnen'; resB = 'Verloren'; }
-        else if(bestA === bestB){ resA = 'Geteilt'; resB = 'Geteilt'; }
-        else { resA = 'Verloren'; resB = 'Gewonnen'; }
-      } else if(typeof bestA === 'number' && bestB === null){
-        resA = 'Gewonnen'; resB = 'Verloren';
-      } else if(typeof bestB === 'number' && bestA === null){
-        resA = 'Verloren'; resB = 'Gewonnen';
-      } else {
-        // fallback tie
-        resA = 'Geteilt'; resB = 'Geteilt';
-      }
+        if(bestA < bestB){ resA='Gewonnen'; resB='Verloren'; }
+        else if(bestA === bestB){ resA='Geteilt'; resB='Geteilt'; }
+        else { resA='Verloren'; resB='Gewonnen'; }
+      } else if(typeof bestA === 'number' && bestB === null){ resA='Gewonnen'; resB='Verloren'; }
+      else if(typeof bestB === 'number' && bestA === null){ resA='Verloren'; resB='Gewonnen'; }
+      else { resA='Geteilt'; resB='Geteilt'; }
       placements[`${h}-team1`] = { result: resA };
       placements[`${h}-team2`] = { result: resB };
     }
-    // update circles visually
+  }
+  // After updating all holes, update team circle visuals and totals
+  for(let h=1; h<=18; h++){
     updateTeamCircles(h);
   }
-
-  // after updating all holes, compute team totals (win:+1, tie:0, lost:-1)
-  let totalA = 0, totalB = 0;
+  // Update team totals
+  let totalA=0, totalB=0;
   for(let h=1; h<=18; h++){
     const a = placements[`${h}-team1`];
     const b = placements[`${h}-team2`];
-    if(a && a.result === "Gewonnen") totalA += 1;
-    else if(a && a.result === "Verloren") totalA -= 1;
-    if(b && b.result === "Gewonnen") totalB += 1;
-    else if(b && b.result === "Verloren") totalB -= 1;
+    if(a && a.result==='Gewonnen') totalA++;
+    else if(a && a.result==='Verloren') totalA--;
+    if(b && b.result==='Gewonnen') totalB++;
+    else if(b && b.result==='Verloren') totalB--;
   }
-  const t1el = document.getElementById('team-total-1');
-  const t2el = document.getElementById('team-total-2');
-  if(t1el) t1el.textContent = totalA;
-  if(t2el) t2el.textContent = totalB;
+  const tA = document.getElementById("teamA-total"), tB = document.getElementById("teamB-total");
+  if(tA) { tA.textContent = totalA; tA.className = (totalA>0? "score-square score-positive" : totalA<0? "score-square score-negative":"score-square score-neutral"); }
+  if(tB) { tB.textContent = totalB; tB.className = (totalB>0? "score-square score-positive" : totalB<0? "score-square score-negative":"score-square score-neutral"); }
 }
 
-/* updateUI: strokeplay totals, bonus square, placement tables with hole result squares */
+/* Helper: update visual class for team circles for a given hole */
+function updateTeamCircles(hole){
+  const a = placements[`${hole}-team1`];
+  const b = placements[`${hole}-team2`];
+  const elA = document.getElementById(`team1-hole-${hole}`);
+  const elB = document.getElementById(`team2-hole-${hole}`);
+  if(elA){
+    if(a && a.result === "Gewonnen") { elA.className='hole-circle win'; }
+    else if(a && a.result === "Verloren") { elA.className='hole-circle lose'; }
+    else if(a && a.result === "Geteilt") { elA.className='hole-circle tie'; }
+    else { elA.className='hole-circle neutral'; }
+  }
+  if(elB){
+    if(b && b.result === "Gewonnen") { elB.className='hole-circle win'; }
+    else if(b && b.result === "Verloren") { elB.className='hole-circle lose'; }
+    else if(b && b.result === "Geteilt") { elB.className='hole-circle tie'; }
+    else { elB.className='hole-circle neutral'; }
+  }
+}
+
+/* UPDATE UI general (non-matchplay) */
 function updateUI(){
   const mode=document.getElementById("mode").value;
-  if(mode==="matchplay"){updateMatchplayUI(); return;}
-  if(mode==="kurz"){ updateKurzUI(); return; }
+  if(mode==="matchplay"){ updateMatchplayUI(); return; }
+  if(mode==="kurz"){ updateKurzspielTotals(); return; }
   players.forEach((p,i)=>{
-    // compute placementSum
+    // sum placements
     let placementSum=0;
     for(let h=1;h<=18;h++){
       let key=`${h}-${i}`;
-      if(placements[key]!==undefined){placementSum+=placements[key].points;}
+      if(placements[key]!==undefined && placements[key].points!==undefined){
+        placementSum+=placements[key].points;
+      }
     }
     const total=p.bonus+placementSum;
-    // score square next to name
     const scoreEl = document.getElementById("score"+i);
-    if(scoreEl) {
+    if(scoreEl){
       scoreEl.textContent = total;
-      scoreEl.className = 'scoreSquare zero';
-      if(total>0) scoreEl.className = 'scoreSquare positive';
-      else if(total<0) scoreEl.className = 'scoreSquare negative';
-      else scoreEl.className = 'scoreSquare zero';
+      if(total>0){ scoreEl.className = "score-square score-positive"; }
+      else if(total<0){ scoreEl.className = "score-square score-negative"; }
+      else { scoreEl.className = "score-square score-neutral"; }
     }
-    // option list items
-    const optListEl = document.getElementById(`optList${i}`);
-    if(optListEl){
-      optListEl.innerHTML = p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>');
+    const optInner = document.getElementById(`optListInner${i}`);
+    if(optInner){ optInner.innerHTML = p.selectedOptions.map(o=>`${o.name} (${o.value>0?'+':''}${o.value})`).join('<br>'); }
+    const bonusSquare = document.getElementById(`bonus-square-${i}`);
+    if(bonusSquare){
+      const b = p.bonus || 0;
+      bonusSquare.textContent = b;
+      if(b>0) bonusSquare.className = "score-small score-positive";
+      else if(b<0) bonusSquare.className = "score-small score-negative";
+      else bonusSquare.className = "score-small score-zero-white";
     }
-    // bonus square
-    const bonusContainer = document.getElementById(`bonusSquareContainer${i}`);
-    if(bonusContainer){
-      bonusContainer.innerHTML = '';
-      let bs = document.createElement('div');
-      bs.className='bonusSquare zero';
-      bs.id = `bonusSquare-${i}`;
-      bs.textContent = p.bonus;
-      if(p.bonus>0) bs.className='bonusSquare positive';
-      else if(p.bonus<0) bs.className='bonusSquare negative';
-      else bs.className='bonusSquare zero';
-      bonusContainer.appendChild(bs);
-    }
-
-    // placement table: show per-hole result squares (points) with same color logic (positive=blue, zero=grey, neg=red)
-    let placementHtml='';
-    let container = document.getElementById(`placement${i}`);
-    if(container){
-      container.innerHTML = '';
-      // show two rows 1-9 and 10-18 as squares showing point value
-      let row1 = document.createElement('div'); row1.style.display='flex'; row1.style.justifyContent='center'; row1.style.flexWrap='wrap';
-      for(let h=1;h<=9;h++){
-        const key = `${h}-${i}`;
-        let val = (placements[key] && typeof placements[key].points === 'number') ? placements[key].points : 0;
-        let sq = document.createElement('div'); sq.className='holeResultSquare zero'; sq.textContent = val;
-        if(val>0) sq.className='holeResultSquare pos';
-        else if(val<0) sq.className='holeResultSquare neg';
-        else sq.className='holeResultSquare zero';
-        row1.appendChild(sq);
+    const placementDiv = document.getElementById("placement"+i);
+    if(placementDiv){
+      let placementHtml='';
+      for(let h=1;h<=18;h++){
+        let key=`${h}-${i}`;
+        if(placements[key]!==undefined && placements[key].points!==undefined){
+          placementHtml+=`Bahn ${h}: ${placements[key].points} Punkte<br>`;
+        }
       }
-      let row2 = document.createElement('div'); row2.style.display='flex'; row2.style.justifyContent='center'; row2.style.flexWrap='wrap';
-      for(let h=10;h<=18;h++){
-        const key = `${h}-${i}`;
-        let val = (placements[key] && typeof placements[key].points === 'number') ? placements[key].points : 0;
-        let sq = document.createElement('div'); sq.className='holeResultSquare zero'; sq.textContent = val;
-        if(val>0) sq.className='holeResultSquare pos';
-        else if(val<0) sq.className='holeResultSquare neg';
-        else sq.className='holeResultSquare zero';
-        row2.appendChild(sq);
-      }
-      container.appendChild(row1); container.appendChild(row2);
+      placementDiv.innerHTML = placementHtml;
     }
   });
 }
 
-/* updateMatchplayUI: revised logic for counting played holes correctly and showing up/down */
+/* MATCHPLAY UI update for 2 and 4 players */
 function updateMatchplayUI(){
   const count=players.length;
   if(count===2){
-    let up=0;
-    // count only holes where placements[`${h}-0`] exists
-    let playedHoles = 0;
+    // compute net up
+    let up=0; let played=0;
     for(let h=1;h<=18;h++){
-      if(!placements[`${h}-0`]) continue;
-      playedHoles++;
-      let res = placements[`${h}-0`].result;
-      if(res==="Gewonnen") up++; else if(res==="Verloren") up--;
+      if(placements[`${h}-0`] && placements[`${h}-0`].result){
+        played++;
+        if(placements[`${h}-0`].result==="Gewonnen") up++;
+        else if(placements[`${h}-0`].result==="Verloren") up--;
+      }
     }
-    let remaining = 18 - playedHoles;
-    let status0="",status1="",class0="",class1="";
-    if(up===0){status0=status1="TIED";class0=class1="badge tied";}
+    let remaining = 18-played;
+    let status0="", status1="", class0="", class1="";
+    if(up===0){ status0=status1="TIED"; class0=class1="badge tied"; }
     else if(up>0){
-      if(up>remaining){status0=`${up} & ${remaining}`;status1="DOWN";class0="badge up";class1="badge down";}
-      else{status0=`${up} UP`;status1=`${Math.abs(up)} DOWN`;class0="badge up";class1="badge down";}
-    }else{
+      if(up>remaining){ status0=`${up} & ${remaining}`; status1="DOWN"; class0="badge up"; class1="badge down"; }
+      else { status0=`${up} UP`; status1=`${Math.abs(up)} DOWN`; class0="badge up"; class1="badge down"; }
+    } else {
       let abs=Math.abs(up);
-      if(abs>remaining){status1=`${abs} & ${remaining}`;status0="DOWN";class1="badge up";class0="badge down";}
-      else{status1=`${abs} UP`;status0=`${abs} DOWN`;class1="badge up";class0="badge down";}
+      if(abs>remaining){ status1=`${abs} & ${remaining}`; status0="DOWN"; class1="badge up"; class0="badge down"; }
+      else { status1=`${abs} UP`; status0=`${abs} DOWN`; class1="badge up"; class0="badge down"; }
     }
-    if(document.getElementById("status0")){document.getElementById("status0").textContent=status0; document.getElementById("status0").className=class0;}
-    if(document.getElementById("status1")){document.getElementById("status1").textContent=status1; document.getElementById("status1").className=class1;}
-  }else if(count===4){
-    // gezählte gespielte Bahnen anhand team1-Einträgen (nicht doppelt)
-    let up=0;
-    let played=0;
+    if(document.getElementById("status0")){ document.getElementById("status0").textContent=status0; document.getElementById("status0").className=class0; }
+    if(document.getElementById("status1")){ document.getElementById("status1").textContent=status1; document.getElementById("status1").className=class1; }
+
+    // update hole circles & placements
     for(let h=1;h<=18;h++){
-      if(!placements[`${h}-team1`]) continue;
-      played++;
-      let res=placements[`${h}-team1`].result;
-      if(res==="Gewonnen") up++; else if(res==="Verloren") up--;
+      const e0 = placements[`${h}-0`];
+      const e1 = placements[`${h}-1`];
+      const el0 = document.getElementById(`p0-hole-${h}`);
+      const el1 = document.getElementById(`p1-hole-${h}`);
+      if(!el0 || !el1) continue;
+      if(e0 && e0.result){
+        if(e0.result==="Gewonnen"){ el0.className='hole-circle win'; el1.className='hole-circle lose'; }
+        else if(e0.result==="Verloren"){ el0.className='hole-circle lose'; el1.className='hole-circle win'; }
+        else { el0.className='hole-circle tie'; el1.className='hole-circle tie'; }
+      } else { el0.className='hole-circle neutral'; el1.className='hole-circle neutral'; }
+    }
+
+    // totals display net
+    const s0 = document.getElementById("score0"), s1 = document.getElementById("score1");
+    if(s0 && s1){
+      s0.textContent = up; s1.textContent = -up;
+      if(up>0){ s0.className="score-square score-positive"; s1.className="score-square score-negative"; }
+      else if(up<0){ s0.className="score-square score-negative"; s1.className="score-square score-positive"; }
+      else { s0.className="score-square score-neutral"; s1.className="score-square score-neutral"; }
+    }
+    // placement tables
+    for(let i=0;i<2;i++){
+      let placementHtml='';
+      for(let h=1;h<=18;h++){
+        if(placements[`${h}-${i}`] && placements[`${h}-${i}`].result) placementHtml += `Bahn ${h}: ${placements[`${h}-${i}`].result}<br>`;
+      }
+      const placementDiv = document.getElementById("placement"+i);
+      if(placementDiv) placementDiv.innerHTML = placementHtml;
+    }
+    return;
+  }
+
+  if(count===4){
+    // First compute automatic team scoring from individuals
+    computeTeamScoringFromIndividuals();
+    // compute up value from team1 results
+    let up=0; let played=0;
+    for(let h=1;h<=18;h++){
+      if(placements[`${h}-team1`] && placements[`${h}-team1`].result){
+        played++;
+        if(placements[`${h}-team1`].result==="Gewonnen") up++;
+        else if(placements[`${h}-team1`].result==="Verloren") up--;
+      }
     }
     let remaining=18-played;
-    let s1="",s2="",c1="",c2="";
-    if(up===0){s1=s2="TIED";c1=c2="badge tied";}
+    let s1="", s2="", c1="", c2="";
+    if(up===0){ s1=s2="TIED"; c1=c2="badge tied"; }
     else if(up>0){
-      if(up>remaining){s1=`${up} & ${remaining}`;s2="DOWN";c1="badge up";c2="badge down";}
-      else{s1=`${up} UP`;s2=`${Math.abs(up)} DOWN`;c1="badge up";c2="badge down";}
-    }else{
+      if(up>remaining){ s1=`${up} & ${remaining}`; s2="DOWN"; c1="badge up"; c2="badge down"; }
+      else { s1=`${up} UP`; s2=`${Math.abs(up)} DOWN`; c1="badge up"; c2="badge down"; }
+    } else {
       let abs=Math.abs(up);
-      if(abs>remaining){s2=`${abs} & ${remaining}`;s1="DOWN";c2="badge up";c1="badge down";}
-      else{s2=`${abs} UP`;s1=`${abs} DOWN`;c2="badge up";c1="badge down";}
+      if(abs>remaining){ s2=`${abs} & ${remaining}`; s1="DOWN"; c2="badge up"; c1="badge down"; }
+      else { s2=`${abs} UP`; s1=`${abs} DOWN`; c2="badge up"; c1="badge down"; }
     }
-    if(document.getElementById("status-team1")){document.getElementById("status-team1").textContent=s1; document.getElementById("status-team1").className=c1;}
-    if(document.getElementById("status-team2")){document.getElementById("status-team2").textContent=s2; document.getElementById("status-team2").className=c2;}
-    // Update team totals already handled in computeTeamScoringFromIndividuals (call it to refresh)
-    computeTeamScoringFromIndividuals();
+    if(document.getElementById("status-team1")){ document.getElementById("status-team1").textContent = s1; document.getElementById("status-team1").className = c1; }
+    if(document.getElementById("status-team2")){ document.getElementById("status-team2").textContent = s2; document.getElementById("status-team2").className = c2; }
+
+    // Update team circle visuals already done in computeTeamScoringFromIndividuals via updateTeamCircles
+
+    // Update per-player placement tables and bonus squares
+    for(let i=0;i<4;i++){
+      const bonusSquare = document.getElementById(`bonus-square-${i}`);
+      if(bonusSquare){
+        const b = players[i].bonus || 0;
+        bonusSquare.textContent = b;
+        if(b>0) bonusSquare.className = "score-small score-positive";
+        else if(b<0) bonusSquare.className = "score-small score-negative";
+        else bonusSquare.className = "score-small score-zero-white";
+      }
+      let placementHtml='';
+      for(let h=1;h<=18;h++){
+        if(placements[`${h}-${i}`] && placements[`${h}-${i}`].points!==undefined) placementHtml += `Bahn ${h}: ${placements[`${h}-${i}`].points} Punkte<br>`;
+      }
+      const placementDiv = document.getElementById("placement"+i);
+      if(placementDiv) placementDiv.innerHTML = placementHtml;
+    }
+    return;
   }
 }
 
-/* Utility: when page first loads ensure mode options updated */
+/* KURZSPIEL: render scorecards per player */
+function renderKurzspielScorecards(){
+  const container=document.getElementById("playersSection");
+  container.innerHTML = ""; // replace with scorecards
+  const count = players.length;
+  const par = parseInt(document.getElementById("parValue").value) || 2;
+
+  for(let i=0;i<count;i++){
+    let card = document.createElement("div");
+    card.className = "playerCard";
+    card.style.minWidth = "300px";
+    card.innerHTML = `<div style="display:flex; align-items:center; justify-content:space-between;">
+      <div><strong>Spieler ${i+1}</strong><br><input type="text" oninput="players[${i}].name=this.value;updateKurzspielTotals();" placeholder="Name (optional)"></div>
+      <div id="kurz-total-${i}" class="score-square score-zero-white">0</div>
+    </div>
+    <div style="margin-top:8px; text-align:center; font-weight:700;">Bahn Ergebnisse</div>
+    <div style="margin-top:8px; display:flex; flex-direction:column; gap:8px;">
+      <div class="hole-row" id="k${i}-holes-1"></div>
+      <div class="hole-row" id="k${i}-holes-2"></div>
+    </div>
+    <div style="margin-top:8px; text-align:center;">
+      <button onclick="clearKurzSpielPlayer(${i})">Reset Spieler ${i+1}</button>
+    </div>`;
+
+    container.appendChild(card);
+
+    for(let h=1; h<=9; h++){
+      const el = document.createElement('div');
+      el.className = 'kurz-circle';
+      el.id = `k${i}-hole-${h}`;
+      el.textContent = '0';
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', () => { promptKurzInput(i, h); });
+      document.getElementById(`k${i}-holes-1`).appendChild(el);
+    }
+    for(let h=10; h<=18; h++){
+      const el = document.createElement('div');
+      el.className = 'kurz-circle';
+      el.id = `k${i}-hole-${h}`;
+      el.textContent = '0';
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', () => { promptKurzInput(i, h); });
+      document.getElementById(`k${i}-holes-2`).appendChild(el);
+    }
+  }
+
+  const info = document.createElement('div');
+  info.style.width='100%';
+  info.style.textAlign='center';
+  info.style.marginTop='12px';
+  info.innerHTML = `<div style="display:inline-block; background:#fff; padding:10px 14px; border-radius:10px; box-shadow:0 3px 8px rgba(0,0,0,0.06);">
+    PAR für alle Bahnen: <strong>${par}</strong>
+    <div style="margin-top:8px; font-size:0.9em; color:#555;">Klicke auf einen Kreis, trage die Zahl ein (ganze Zahl). Farben ändern sich automatisch entsprechend PAR.</div>
+  </div>`;
+  document.getElementById("game").appendChild(info);
+}
+
+function promptKurzInput(playerIndex, holeNumber){
+  const current = (kurzScores[playerIndex] && kurzScores[playerIndex][holeNumber] !== undefined) ? kurzScores[playerIndex][holeNumber] : 0;
+  const val = prompt(`Spieler ${playerIndex+1} - Bahn ${holeNumber} Ergebnis (Zahl):`, current);
+  if(val === null) return;
+  const n = parseInt(val);
+  if(isNaN(n)) { alert("Bitte eine gültige ganze Zahl eingeben."); return; }
+  kurzScores[playerIndex][holeNumber] = n;
+  updateKurzspielCell(playerIndex, holeNumber);
+  updateKurzspielTotals();
+}
+
+function updateKurzspielCell(playerIndex, holeNumber){
+  const par = parseInt(document.getElementById("parValue").value) || 2;
+  const el = document.getElementById(`k${playerIndex}-hole-${holeNumber}`);
+  if(!el) return;
+  const val = kurzScores[playerIndex][holeNumber] || 0;
+  el.textContent = val;
+  const diff = val - par;
+  el.className = 'kurz-circle';
+  if(val === 0){
+    el.style.background = '#fff'; el.style.color='#000'; el.style.borderColor='#000';
+  } else {
+    el.style.borderColor='transparent';
+    if(diff <= -2){ el.classList.add('kurz-orange'); el.style.background='orange'; el.style.color='#fff'; }
+    else if(diff === -1){ el.classList.add('kurz-yellow'); el.style.background='yellow'; el.style.color='#000'; }
+    else if(diff === 0){ el.classList.add('kurz-blue'); el.style.background='#2b7cff'; el.style.color='#fff'; }
+    else if(diff === 1){ el.classList.add('kurz-red'); el.style.background='#d9534f'; el.style.color='#fff'; }
+    else if(diff === 2){ el.classList.add('kurz-purple'); el.style.background='purple'; el.style.color='#fff'; }
+    else if(diff >= 3){ el.classList.add('kurz-black'); el.style.background='#000'; el.style.color='#fff'; }
+    else { el.style.background='#fff'; el.style.color='#000'; }
+  }
+}
+
+function updateKurzspielTotals(){
+  const count = players.length;
+  for(let i=0;i<count;i++){
+    let total = 0;
+    for(let h=1; h<=18; h++){
+      if(kurzScores[i] && kurzScores[i][h] !== undefined) total += kurzScores[i][h];
+    }
+    const totalEl = document.getElementById(`kurz-total-${i}`);
+    if(totalEl){
+      totalEl.textContent = total;
+      if(total>0) totalEl.className = "score-square score-positive";
+      else if(total<0) totalEl.className = "score-square score-negative";
+      else totalEl.className = "score-square score-neutral";
+    }
+    for(let h=1; h<=18; h++){
+      if(kurzScores[i] && kurzScores[i][h] !== undefined) updateKurzspielCell(i,h);
+      else { const el=document.getElementById(`k${i}-hole-${h}`); if(el){ el.textContent='0'; el.className='kurz-circle'; el.style.background='#fff'; el.style.color='#000'; el.style.borderColor='#000'; } }
+    }
+  }
+}
+
+function clearKurzSpielPlayer(i){
+  kurzScores[i] = {};
+  for(let h=1; h<=18; h++){
+    const el = document.getElementById(`k${i}-hole-${h}`);
+    if(el){ el.textContent = '0'; el.className='kurz-circle'; el.style.background='#fff'; el.style.color='#000'; el.style.borderColor='#000'; }
+  }
+  updateKurzspielTotals();
+}
+
+/* Utility: initial setup */
 updateModeOptions();
-
 </script>
-
 </body>
 </html>
