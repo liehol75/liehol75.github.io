@@ -1,0 +1,112 @@
+/* styles.css - kopiere komplett */
+/* Basis */
+* { box-sizing: border-box; }
+html,body { height:100%; margin:0; }
+body {
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: linear-gradient(135deg,#e6f2ff,#f7faff);
+  color:#222;
+  display:flex;
+  flex-direction:column;
+  height:100vh; /* wichtig: passt das Layout an Viewport an */
+  overflow:hidden; /* kein vertikales Scrollen der Seite */
+}
+
+/* Header */
+header {
+  padding:10px 14px;
+  text-align:center;
+  flex:0 0 auto;
+}
+h1 { margin:0; color:#2b7cff; font-size:1.25rem; }
+
+/* App container: nimmt verbleibenden Platz */
+#app { display:flex; flex-direction:column; flex:1 1 auto; min-height:0; }
+
+/* Panels (Start / Game) - jeweils so groß wie nötig, aber Gesamt bleibt in Viewport */
+.panel { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:6px; flex:1 1 auto; min-height:0; width:100%; }
+.panel-inner { width:100%; max-width:1100px; padding:6px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:8px; }
+
+/* Card */
+.card { background:#fff; border-radius:12px; padding:12px; box-shadow:0 4px 10px rgba(0,0,0,0.06); width:100%; max-width:720px; }
+
+/* Rows / layout helpers */
+.row { display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap; width:100%; }
+.center { justify-content:center; }
+
+/* Generators stacked and visually separated */
+.generators { display:flex; gap:10px; align-items:center; justify-content:center; width:100%; max-width:720px; }
+.gen-card { background:#fff; border-radius:10px; padding:10px; min-width:150px; box-shadow:0 3px 8px rgba(0,0,0,0.05); display:flex; flex-direction:column; align-items:center; gap:8px; }
+.gen-result { min-height:36px; display:flex; align-items:center; justify-content:center; width:100%; font-weight:700; text-align:center; }
+
+/* visual separator between generator cards */
+.gen-sep { width:2px; background:linear-gradient(180deg,transparent,#e6eefc,transparent); height:48px; border-radius:2px; }
+
+/* Players area */
+#playersArea { width:100%; max-width:1100px; display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:flex-start; }
+
+/* Player card */
+.playerCard, .teamCard { background:#fff; border-radius:10px; padding:8px; box-shadow:0 3px 8px rgba(0,0,0,0.05); width:100%; display:flex; flex-direction:column; gap:8px; }
+
+/* For team view we want teams stacked A then B */
+.teamWrapperColumn { display:flex; flex-direction:column; gap:10px; width:100%; }
+
+/* compact inputs */
+input[type="text"], select[type="select"], input[type="number"], select {
+  padding:8px; border-radius:6px; border:1px solid #ccc; min-width:64px;
+}
+
+/* holes grid: cards for each hole - we'll allow internal scrolling horizontally if needed but no vertical page scroll */
+.holes-grid { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; width:100%; align-items:flex-start; }
+
+/* holeCard */
+.holeCard {
+  background:#fff; border-radius:10px; padding:8px; min-width:200px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:8px; align-items:center;
+}
+
+/* holeControls */
+.holeControls { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center; }
+
+/* Circles for matchplay and team display */
+.hole-row { display:flex; gap:6px; justify-content:center; align-items:center; flex-wrap:wrap; }
+.hole-circle {
+  width:30px; height:30px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; background:#fff; border:2px solid #000; color:#000;
+}
+.hole-circle.win { background:#2b7cff; color:#fff; border-color:transparent; }
+.hole-circle.lose { background:#d9534f; color:#fff; border-color:transparent; }
+.hole-circle.tie { background:#8a8a8a; color:#fff; border-color:transparent; }
+.hole-circle.neutral { background:#fff; color:#000; border-color:#000; }
+
+/* score squares */
+.score-square { display:inline-flex; align-items:center; justify-content:center; min-width:40px; min-height:32px; padding:4px 8px; border-radius:6px; font-weight:700; border:1px solid #000; }
+.score-zero { background:#fff; color:#000; }
+.score-zero-gray { background:#666; color:#fff; }
+.score-pos { background:#2b7cff; color:#fff; }
+.score-neg { background:#d9534f; color:#fff; }
+
+/* Kurzspiel circle smaller & centered */
+.kurz-circle { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; border:2px solid #000; background:#fff; color:#000; font-size:0.85rem; line-height:1; }
+
+/* responsive rules: adjust sizes to fit vertically */
+@media (max-width:900px){
+  .holeCard { min-width:160px; }
+  .gen-card { min-width:140px; padding:8px; }
+  .score-square { min-width:36px; min-height:30px; font-size:0.95rem; padding:3px 6px; }
+}
+@media (max-width:520px){
+  header { padding:8px; }
+  h1 { font-size:1rem; }
+  .generators { gap:6px; }
+  .gen-sep { display:none; }
+  .holeCard { min-width:46%; max-width:46%; padding:6px; }
+  .playerCard, .teamCard { padding:6px; }
+  .score-square { min-width:32px; min-height:28px; font-size:0.9rem; padding:2px 6px; }
+  .hole-circle { width:26px; height:26px; font-size:0.85rem; }
+  .kurz-circle { width:18px; height:18px; font-size:0.75rem; }
+}
+
+/* Ensure no vertical page scroll: internal panels may scroll if content exceeds available space */
+.panel-inner { overflow:auto; -webkit-overflow-scrolling:touch; max-height:calc(100vh - 160px); }
