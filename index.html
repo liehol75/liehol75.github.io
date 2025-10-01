@@ -10,7 +10,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* KEIN horizontales Scrollen */
+  overflow-x: hidden; /* KEIN horizontales Scrollen (Seite insgesamt) */
   overflow-y: auto;   /* vertikales Scrollen erlaubt */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -115,7 +115,7 @@ input, select {
 .placementTable { background:#f0f4f7; }
 
 /* Circles for hole numbers */
-.hole-row { display:flex; gap:6px; align-items:center; justify-content:center; flex-wrap:wrap; }
+.hole-row { display:flex; gap:6px; align-items:center; justify-content:center; /* important: keep as single row */ flex-wrap:nowrap; overflow-x:auto; }
 .hole-circle {
   width:34px; height:34px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
   font-weight:700; font-size:0.95rem; background:#fff; color:#000; border:2px solid #000;
@@ -126,7 +126,7 @@ input, select {
 .hole-circle.neutral { background:#fff; color:#000; border-color:#000; }
 
 /* Kurzspiel circles (smaller) */
-.kurz-wrapper { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+.kurz-wrapper { display:flex; gap:8px; /* ensure circles stay in one row */ flex-wrap:nowrap; justify-content:center; overflow-x:auto; }
 .kurz-cell { display:flex; flex-direction:column; align-items:center; gap:6px; }
 
 /* small score squares */
@@ -292,11 +292,17 @@ function renderPlayers(){
       <div style="display:flex; flex-direction:column; gap:8px;">
         <div class="playerCard" style="margin:0;">
           <div>Spieler 1:<br><input type="text" oninput="players[0].name=this.value; updateUI();" /></div>
+          <div style="margin-top:6px;">
+            <select onchange="addOption(0,this.value)"><option value="">Option wählen…</option>${options.map(o=>`<option value="${o.name}">${o.name} (${o.value>0?'+':''}${o.value})</option>`).join('')}</select>
+          </div>
           <div class="optionList" id="opt0"><div id="optListInner0"></div><div id="bonus-square-0" class="score-small score-zero-white">0</div></div>
           <div class="placementTable" id="placement0"></div>
         </div>
         <div class="playerCard" style="margin:0;">
           <div>Spieler 2:<br><input type="text" oninput="players[1].name=this.value; updateUI();" /></div>
+          <div style="margin-top:6px;">
+            <select onchange="addOption(1,this.value)"><option value="">Option wählen…</option>${options.map(o=>`<option value="${o.name}">${o.name} (${o.value>0?'+':''}${o.value})</option>`).join('')}</select>
+          </div>
           <div class="optionList" id="opt1"><div id="optListInner1"></div><div id="bonus-square-1" class="score-small score-zero-white">0</div></div>
           <div class="placementTable" id="placement1"></div>
         </div>
@@ -312,11 +318,17 @@ function renderPlayers(){
       <div style="display:flex; flex-direction:column; gap:8px;">
         <div class="playerCard" style="margin:0;">
           <div>Spieler 3:<br><input type="text" oninput="players[2].name=this.value; updateUI();" /></div>
+          <div style="margin-top:6px;">
+            <select onchange="addOption(2,this.value)"><option value="">Option wählen…</option>${options.map(o=>`<option value="${o.name}">${o.name} (${o.value>0?'+':''}${o.value})</option>`).join('')}</select>
+          </div>
           <div class="optionList" id="opt2"><div id="optListInner2"></div><div id="bonus-square-2" class="score-small score-zero-white">0</div></div>
           <div class="placementTable" id="placement2"></div>
         </div>
         <div class="playerCard" style="margin:0;">
           <div>Spieler 4:<br><input type="text" oninput="players[3].name=this.value; updateUI();" /></div>
+          <div style="margin-top:6px;">
+            <select onchange="addOption(3,this.value)"><option value="">Option wählen…</option>${options.map(o=>`<option value="${o.name}">${o.name} (${o.value>0?'+':''}${o.value})</option>`).join('')}</select>
+          </div>
           <div class="optionList" id="opt3"><div id="optListInner3"></div><div id="bonus-square-3" class="score-small score-zero-white">0</div></div>
           <div class="placementTable" id="placement3"></div>
         </div>
@@ -353,7 +365,7 @@ function renderPlayers(){
 
     // Team A block
     let t1=document.createElement("div"); t1.className='teamCard';
-    t1.innerHTML = `<div class="teamHeader"><strong>Team A</strong><div style="display:flex; gap:10px; align-items:center;"><div id="status-team1" class="badge tied">TIED</div><div id="teamA-total" class="score-square score-zero-white">0</div></div></div>
+    t1.innerHTML = `<div class="teamHeader"><strong>Team A</strong><div style="display:flex; gap:10px; align-items:center;"><div id="status-team1" class="badge tied">TIED</div></div></div>
       <div style="display:flex; gap:8px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;">
         <div style="flex:1; min-width:200px;">
           Spieler 1:<br><input type="text" oninput="players[0].name=this.value;updateUI();">
@@ -370,7 +382,7 @@ function renderPlayers(){
 
     // Team B block
     let t2=document.createElement("div"); t2.className='teamCard';
-    t2.innerHTML = `<div class="teamHeader"><strong>Team B</strong><div style="display:flex; gap:10px; align-items:center;"><div id="status-team2" class="badge tied">TIED</div><div id="teamB-total" class="score-square score-zero-white">0</div></div></div>
+    t2.innerHTML = `<div class="teamHeader"><strong>Team B</strong><div style="display:flex; gap:10px; align-items:center;"><div id="status-team2" class="badge tied">TIED</div></div></div>
       <div style="display:flex; gap:8px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;">
         <div style="flex:1; min-width:200px;">
           Spieler 3:<br><input type="text" oninput="players[2].name=this.value;updateUI();">
@@ -412,7 +424,6 @@ function renderPlayers(){
         <div><strong>Spieler ${i+1}</strong><br><input type="text" oninput="players[${i}].name=this.value;updateUI();"></div>
         <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
           <div id="status${i}" class="badge tied" style="min-width:90px; justify-content:center; text-align:center;">TIED</div>
-          <div id="score${i}" class="score-square score-zero-white">0</div>
         </div>
       </div>
       <div class="placementTable" id="placement${i}" style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
@@ -791,6 +802,7 @@ function updateMatchplayUI(){
     let status0="", status1="", class0="", class1="";
     if(up===0){ status0=status1="TIED"; class0=class1="badge tied"; }
     else if(up>0){
+      // simplified: show UP/DOWN and edge-case remaining info as before
       if(up>remaining){ status0=`${up} & ${remaining}`; status1="DOWN"; class0="badge up"; class1="badge down"; }
       else { status0=`${up} UP`; status1=`${Math.abs(up)} DOWN`; class0="badge up"; class1="badge down"; }
     } else {
@@ -815,16 +827,7 @@ function updateMatchplayUI(){
       } else { el0.className='hole-circle neutral'; el1.className='hole-circle neutral'; el0.style.color='#000'; el1.style.color='#000'; }
     }
 
-    // totals display net (centered)
-    const s0 = document.getElementById("score0"), s1 = document.getElementById("score1");
-    if(s0 && s1){
-      s0.textContent = up; s1.textContent = -up;
-      if(up>0){ s0.className="score-square score-positive"; s1.className="score-square score-negative"; }
-      else if(up<0){ s0.className="score-square score-negative"; s1.className="score-square score-positive"; }
-      else { s0.className="score-square score-neutral"; s1.className="score-square score-neutral"; }
-    }
-
-    // Note: textual placement table unchanged but user requested that textual "Bahn Ergebnis" is not required — we've replaced that with circles in placementTable already.
+    // Note: die zusätzlichen numerischen Score-Quadrate wurden auf Anforderung entfernt (nur Badges UP/DOWN/TIED verbleiben).
 
     return;
   }
@@ -879,7 +882,10 @@ function updateMatchplayUI(){
   }
 }
 
-/* KURZSPIEL: render scorecards per player with dropdown selection (0..par*3+1) */
+/* KURZSPIEL: render scorecards per player with dropdown selection (0..par*3+1)
+   Änderung: Darstellung so, dass Bahnen 1-9 in einer Zeile angezeigt werden
+   und darunter die zugehörigen Dropdowns. Gleiches für 10-18.
+*/
 function renderKurzspielScorecards(){
   const container=document.getElementById("playersSection");
   container.innerHTML = ""; // replace with scorecards
@@ -891,56 +897,99 @@ function renderKurzspielScorecards(){
     let card = document.createElement("div");
     card.className = "playerCard";
     card.style.minWidth = "300px";
+
+    // Header with name and total
     card.innerHTML = `<div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
       <div><strong>Spieler ${i+1}</strong><br><input type="text" oninput="players[${i}].name=this.value;updateKurzspielTotals();" placeholder="Name (optional)"></div>
       <div id="kurz-total-${i}" class="score-square score-zero-white">0</div>
-    </div>
-    <div style="margin-top:8px; text-align:center; font-weight:700;">Bahn Ergebnisse</div>
-    <div style="margin-top:8px; display:flex; flex-direction:column; gap:8px; width:100%;">
-      <div class="hole-row" id="k${i}-holes-1"></div>
-      <div class="hole-row" id="k${i}-holes-2"></div>
-    </div>
-    <div style="margin-top:8px; text-align:center;">
-      <button onclick="clearKurzSpielPlayer(${i})">Reset Spieler ${i+1}</button>
     </div>`;
+
+    // Holes 1-9 (row of circles)
+    const holesRow1 = document.createElement('div');
+    holesRow1.className = 'hole-row';
+    holesRow1.style.marginTop = '8px';
+    holesRow1.style.justifyContent = 'center';
+    for(let h=1; h<=9; h++){
+      const el = document.createElement('div');
+      el.className = 'kurz-circle';
+      el.id = `k${i}-hole-${h}`;
+      el.textContent = h;
+      el.style.minWidth='28px';
+      el.style.minHeight='28px';
+      el.style.display='inline-flex';
+      el.style.alignItems='center';
+      el.style.justifyContent='center';
+      holesRow1.appendChild(el);
+    }
+
+    // Dropdowns for 1-9 (in one row below)
+    const selectsRow1 = document.createElement('div');
+    selectsRow1.className = 'hole-row';
+    selectsRow1.style.marginTop = '6px';
+    selectsRow1.style.justifyContent = 'center';
+    for(let h=1; h<=9; h++){
+      const sel = document.createElement('select');
+      sel.id = `k${i}-sel-${h}`;
+      sel.style.fontSize='0.9rem';
+      sel.style.width='44px';
+      sel.style.height='34px';
+      for(let s=0;s<=maxScore;s++){ const opt = document.createElement('option'); opt.value = s; opt.text = s; sel.appendChild(opt); }
+      sel.onchange = function(){ kurzScores[i][h] = parseInt(this.value); updateKurzspielCell(i,h); updateKurzspielTotals(); };
+      selectsRow1.appendChild(sel);
+    }
+
+    // Holes 10-18 (row of circles)
+    const holesRow2 = document.createElement('div');
+    holesRow2.className = 'hole-row';
+    holesRow2.style.marginTop = '12px';
+    holesRow2.style.justifyContent = 'center';
+    for(let h=10; h<=18; h++){
+      const el = document.createElement('div');
+      el.className = 'kurz-circle';
+      el.id = `k${i}-hole-${h}`;
+      el.textContent = h;
+      el.style.minWidth='28px';
+      el.style.minHeight='28px';
+      el.style.display='inline-flex';
+      el.style.alignItems='center';
+      el.style.justifyContent='center';
+      holesRow2.appendChild(el);
+    }
+
+    // Dropdowns for 10-18 (in one row below)
+    const selectsRow2 = document.createElement('div');
+    selectsRow2.className = 'hole-row';
+    selectsRow2.style.marginTop = '6px';
+    selectsRow2.style.justifyContent = 'center';
+    for(let h=10; h<=18; h++){
+      const sel = document.createElement('select');
+      sel.id = `k${i}-sel-${h}`;
+      sel.style.fontSize='0.9rem';
+      sel.style.width='44px';
+      sel.style.height='34px';
+      for(let s=0;s<=maxScore;s++){ const opt = document.createElement('option'); opt.value = s; opt.text = s; sel.appendChild(opt); }
+      sel.onchange = function(){ kurzScores[i][h] = parseInt(this.value); updateKurzspielCell(i,h); updateKurzspielTotals(); };
+      selectsRow2.appendChild(sel);
+    }
+
+    // Append all to card
+    card.appendChild(holesRow1);
+    card.appendChild(selectsRow1);
+    card.appendChild(holesRow2);
+    card.appendChild(selectsRow2);
+
+    // Reset button
+    const resetDiv = document.createElement('div');
+    resetDiv.style.marginTop='8px';
+    resetDiv.style.textAlign='center';
+    resetDiv.innerHTML = `<button onclick="clearKurzSpielPlayer(${i})">Reset Spieler ${i+1}</button>`;
+    card.appendChild(resetDiv);
 
     container.appendChild(card);
 
-    for(let h=1; h<=9; h++){
-      const elWrapper = document.createElement('div');
-      elWrapper.className = 'kurz-cell';
-      const el = document.createElement('div');
-      el.className = 'kurz-circle';
-      el.id = `k${i}-hole-${h}`;
-      el.textContent = '0';
-      el.style.minWidth='28px';
-      el.style.minHeight='28px';
-      elWrapper.appendChild(el);
-      // create select
-      const sel = document.createElement('select');
-      sel.id = `k${i}-sel-${h}`;
-      sel.style.fontSize='0.9rem';
-      for(let s=0;s<=maxScore;s++){ const opt = document.createElement('option'); opt.value = s; opt.text = s; sel.appendChild(opt); }
-      sel.onchange = function(){ kurzScores[i][h] = parseInt(this.value); updateKurzspielCell(i,h); updateKurzspielTotals(); };
-      elWrapper.appendChild(sel);
-      document.getElementById(`k${i}-holes-1`).appendChild(elWrapper);
-    }
-    for(let h=10; h<=18; h++){
-      const elWrapper = document.createElement('div');
-      elWrapper.className = 'kurz-cell';
-      const el = document.createElement('div');
-      el.className = 'kurz-circle';
-      el.id = `k${i}-hole-${h}`;
-      el.textContent = '0';
-      elWrapper.appendChild(el);
-      const sel = document.createElement('select');
-      sel.id = `k${i}-sel-${h}`;
-      sel.style.fontSize='0.9rem';
-      for(let s=0;s<=maxScore;s++){ const opt = document.createElement('option'); opt.value = s; opt.text = s; sel.appendChild(opt); }
-      sel.onchange = function(){ kurzScores[i][h] = parseInt(this.value); updateKurzspielCell(i,h); updateKurzspielTotals(); };
-      elWrapper.appendChild(sel);
-      document.getElementById(`k${i}-holes-2`).appendChild(elWrapper);
-    }
+    // initialize kurzScores row
+    if(!kurzScores[i]) kurzScores[i] = {};
+    for(let h=1; h<=18; h++){ kurzScores[i][h] = 0; }
   }
 
   const info = document.createElement('div');
@@ -959,20 +1008,26 @@ function updateKurzspielCell(playerIndex, holeNumber){
   const el = document.getElementById(`k${playerIndex}-hole-${holeNumber}`);
   if(!el) return;
   const val = (kurzScores[playerIndex] && kurzScores[playerIndex][holeNumber] !== undefined) ? kurzScores[playerIndex][holeNumber] : 0;
-  el.textContent = val;
+  // we display the score inside the circle (but the circle shows the hole number - keep appearance by coloring)
   const diff = val - par;
+  // reset classes/styles
   el.className = 'kurz-circle';
+  el.style.borderColor='#000';
+  el.style.background='#fff';
+  el.style.color='#000';
   if(val === 0){
-    el.style.background = '#fff'; el.style.color='#000'; el.style.borderColor='#000';
+    // leave as white with hole number
+    el.textContent = holeNumber;
   } else {
-    el.style.borderColor='transparent';
+    // show value instead of hole number for feedback
+    el.textContent = val;
     if(diff <= -2){ el.classList.add('kurz-orange'); el.style.background='orange'; el.style.color='#fff'; }
     else if(diff === -1){ el.classList.add('kurz-yellow'); el.style.background='yellow'; el.style.color='#000'; }
     else if(diff === 0){ el.classList.add('kurz-blue'); el.style.background='#2b7cff'; el.style.color='#fff'; }
     else if(diff === 1){ el.classList.add('kurz-red'); el.style.background='#d9534f'; el.style.color='#fff'; }
     else if(diff === 2){ el.classList.add('kurz-purple'); el.style.background='purple'; el.style.color='#fff'; }
     else if(diff >= 3){ el.classList.add('kurz-black'); el.style.background='#000'; el.style.color='#fff'; }
-    else { el.style.background='#fff'; el.style.color='#000'; }
+    else { el.style.background='#fff'; el.style.color='#000'; el.textContent = val; }
   }
 }
 
@@ -992,7 +1047,7 @@ function updateKurzspielTotals(){
     }
     for(let h=1; h<=18; h++){
       if(kurzScores[i] && kurzScores[i][h] !== undefined) updateKurzspielCell(i,h);
-      else { const el=document.getElementById(`k${i}-hole-${h}`); if(el){ el.textContent='0'; el.className='kurz-circle'; el.style.background='#fff'; el.style.color='#000'; el.style.borderColor='#000'; } }
+      else { const el=document.getElementById(`k${i}-hole-${h}`); if(el){ el.textContent=h; el.className='kurz-circle'; el.style.background='#fff'; el.style.color='#000'; el.style.borderColor='#000'; } }
       const sel = document.getElementById(`k${i}-sel-${h}`);
       if(sel) sel.value = (kurzScores[i] && kurzScores[i][h] !== undefined) ? kurzScores[i][h] : 0;
     }
@@ -1003,7 +1058,7 @@ function clearKurzSpielPlayer(i){
   kurzScores[i] = {};
   for(let h=1; h<=18; h++){
     const el = document.getElementById(`k${i}-hole-${h}`);
-    if(el){ el.textContent = '0'; el.className='kurz-circle'; el.style.background='#fff'; el.style.color='#000'; el.style.borderColor='#000'; }
+    if(el){ el.textContent = h; el.className='kurz-circle'; el.style.background='#fff'; el.style.color='#000'; el.style.borderColor='#000'; }
     const sel = document.getElementById(`k${i}-sel-${h}`); if(sel) sel.value = 0;
   }
   updateKurzspielTotals();
